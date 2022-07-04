@@ -1,0 +1,47 @@
+$isa-bg-Collection: #ABEACB;
+$isa-bg-HiddenItem: #D3D3D3;
+
+$dropdown-link-active-bg: #dcdcdd;
+
+// Primary colours
+$ibisba-dark-green: #39850F;
+$ibisba-light: #FFFFFF;
+$ibisba-grey: #424242;
+$ibisba-light-green: #95BE41;
+
+// Secondary colours
+$ibisba-orange: #FF9538;
+$ibisba-mustard: #F6C100;
+$ibisba-red: #E32400;
+
+// Neutral shades
+$ibisba-black: #000000;
+$ibisba-cool-grey: #CDCDCD;
+$ibisba-white: #FDFBFB;
+
+// Fonts
+$ibisba-font-family: Corbel, Lato, sans-serif;
+
+.navbar {
+  border-radius: 0;
+  flex-shrink: 0;
+  background-color: $ibisba-light;
+  color: $ibisba-dark-green
+}
+
+html, body {
+    height: 100%;
+    font-family: $ibisba-font-family;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: $ibisba-dark-green;
+}
+
+.panel-default > .panel-heading {
+    color: $ibisba-dark-green;
+}
+
+h1 {
+     color: $ibisba-dark-green;
+}

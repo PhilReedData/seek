@@ -458,12 +458,6 @@ PURL URL URN w3id DRKS UTN ISRCTN EudraCT EUDAMED NCT(ClinicalTrials.gov) NFDI4H
   )
 
 
-  study_type_description = CustomMetadataAttribute.find_or_initialize_by(title: 'study_type_description')
-  study_type_description.update_attributes(
-    title: 'study_type_description', required: false, sample_attribute_type: text_type,
-    description: attribute_descriptions['study_type_description'], label: attribute_headings['study_type_description'], pos:4
-  )
-
   # ****************** StudyDesignConditions ******************
   study_conditions = CustomMetadataAttribute.find_or_initialize_by(title: 'study_conditions')
   study_conditions.update_attributes(
@@ -587,23 +581,13 @@ PURL URL URN w3id DRKS UTN ISRCTN EudraCT EUDAMED NCT(ClinicalTrials.gov) NFDI4H
     description: attribute_descriptions['study_eligibility_age_min'], label: attribute_headings['study_eligibility_age_min'], pos:25
   )
 
-  study_eligibility_age_min_description = CustomMetadataAttribute.find_or_initialize_by(title: 'study_eligibility_age_min_description')
-  study_eligibility_age_min_description.update_attributes(
-    title: 'study_eligibility_age_min_description', required: false, sample_attribute_type: text_type,
-    description: attribute_descriptions['study_eligibility_age_min_description'], label: attribute_headings['study_eligibility_age_min_description'], pos:26
-  )
-
   study_eligibility_age_max = CustomMetadataAttribute.find_or_initialize_by(title: 'study_eligibility_age_max')
   study_eligibility_age_max.update_attributes(
     title: 'study_eligibility_age_max', required: false, sample_attribute_type: float_type,
     description: attribute_descriptions['study_eligibility_age_max'], label: attribute_headings['study_eligibility_age_max'], pos:27
   )
 
-  study_eligibility_age_max_description = CustomMetadataAttribute.find_or_initialize_by(title: 'study_eligibility_age_max_description')
-  study_eligibility_age_max_description.update_attributes(
-    title: 'study_eligibility_age_max_description', required: false, sample_attribute_type: text_type,
-    description: attribute_descriptions['study_eligibility_age_max_description'], label: attribute_headings['study_eligibility_age_max_description'], pos:28
-  )
+
   study_eligibility_gender = CustomMetadataAttribute.find_or_initialize_by(title: 'study_eligibility_gender')
   study_eligibility_gender.update_attributes(
     title: 'study_eligibility_gender', required: false, sample_attribute_type: cv_type, sample_controlled_vocab: study_eligibility_gender_cv,
@@ -644,23 +628,12 @@ PURL URL URN w3id DRKS UTN ISRCTN EudraCT EUDAMED NCT(ClinicalTrials.gov) NFDI4H
     title: 'study_age_min_examined', required: false, sample_attribute_type: float_type,
     description: attribute_descriptions['study_age_min_examined'], label: attribute_headings['study_age_min_examined'], pos:35
   )
-
-  study_age_min_examined_description = CustomMetadataAttribute.find_or_initialize_by(title: 'study_age_min_examined_description')
-  study_age_min_examined_description.update_attributes(
-    title: 'study_age_min_examined_description', required: false, sample_attribute_type: text_type,
-    description: attribute_descriptions['study_age_min_examined_description'], label: attribute_headings['study_age_min_examined_description'], pos:36
-  )
+  
 
   study_age_max_examined = CustomMetadataAttribute.find_or_initialize_by(title: 'study_age_max_examined')
   study_age_max_examined.update_attributes(
     title: 'study_age_max_examined', required: false, sample_attribute_type: float_type,
     description: attribute_descriptions['study_age_max_examined'], label: attribute_headings['study_age_max_examined'], pos:37
-  )
-
-  study_age_max_examined_description = CustomMetadataAttribute.find_or_initialize_by(title: 'study_age_max_examined_description')
-  study_age_max_examined_description.update_attributes(
-    title: 'study_age_max_examined_description', required: false, sample_attribute_type: text_type,
-    description: attribute_descriptions['study_age_max_examined_description'], label: attribute_headings['study_age_max_examined_description'], pos:38
   )
 
   study_hypothesis = CustomMetadataAttribute.find_or_initialize_by(title: 'study_hypothesis')
@@ -755,12 +728,11 @@ PURL URL URN w3id DRKS UTN ISRCTN EudraCT EUDAMED NCT(ClinicalTrials.gov) NFDI4H
   cmt_studyhub_studydesign_general.update_attributes(
     title: 'NFDI4Health Studyhub Resource StudyDesign General', supported_type: 'StudyhubResource',
     custom_metadata_attributes: [
-      study_primary_design, study_type, study_type_description, study_conditions, study_conditions_classification, study_conditions_classification_code,
+      study_primary_design, study_type, study_conditions, study_conditions_classification, study_conditions_classification_code,
       study_ethics_commitee_approval, study_status, study_status_enrolling_by_invitation, study_status_when_intervention, study_status_halted_stage, study_status_halted_reason,
       study_recruitment_status_register, study_start_date, study_end_date, study_centers, study_centers_number, study_subject, study_sampling, study_data_source, study_data_source_description,
-      study_eligibility_age_min, study_eligibility_age_min_description, study_eligibility_age_max, study_eligibility_age_max_description, study_eligibility_gender, study_eligibility_inclusion_criteria,
-      study_eligibility_exclusion_criteria, study_population, study_target_sample_size, study_obtained_sample_size, study_age_min_examined, study_age_min_examined_description, study_age_max_examined,
-      study_age_max_examined_description, study_hypothesis, study_outcomes, study_outcome_type, study_outcome_title, study_outcome_description, study_outcome_time_frame,
+      study_eligibility_age_min, study_eligibility_age_max, study_eligibility_gender, study_eligibility_inclusion_criteria,
+      study_eligibility_exclusion_criteria, study_population, study_target_sample_size, study_obtained_sample_size, study_age_min_examined, study_age_max_examined, study_hypothesis, study_outcomes, study_outcome_type, study_outcome_title, study_outcome_description, study_outcome_time_frame,
       study_design_comment, study_data_sharing_plan_generally, study_data_sharing_plan_description, study_data_sharing_plan_supporting_information, study_data_sharing_plan_time_frame,
       study_data_sharing_plan_access_criteria, study_data_sharing_plan_url, study_region
     ]

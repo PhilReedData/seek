@@ -38,7 +38,6 @@ role_affiliation_identifier_scheme: Scheme
 # study design general
 
 study_primary_design: Study primary design
-study_type_description: Description of study type
 study_conditions: Health conditions or diseases studied in the study
 study_conditions_classification: Terminology
 study_conditions_classification_code: Code
@@ -64,9 +63,7 @@ study_data_source: Data sources
 
 study_data_source_description: Additional information about data sources
 study_eligibility_age_min: "Eligibility criteria: Minimum age"
-study_eligibility_age_min_description: "Eligibility criteria: Additional information about the minimum age"
 study_eligibility_age_max: "Eligibility criteria: Maximum age"
-study_eligibility_age_max_description: "Eligibility criteria: Additional information about the maximum age"
 study_eligibility_gender: "Eligibility criteria: Gender"
 study_eligibility_inclusion_criteria: "Eligibility criteria: Inclusion criteria"
 study_eligibility_exclusion_criteria: "Eligibility criteria: Exclusion criteria"
@@ -74,9 +71,7 @@ study_population: Description of study population
 study_target_sample_size: Target sample size
 study_obtained_sample_size: Obtained sample size
 study_age_min_examined: Actual minimum age of participants
-study_age_min_examined_description: Additional information about the actual minimum age
 study_age_max_examined: Actual maximum age of participants
-study_age_max_examined_description: Additional information about the actual maximum age
 
 
 

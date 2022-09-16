@@ -112,15 +112,18 @@ study_age_max_examined study_target_follow-up_duration].freeze
 
   def check_mandatory_resource_use_rights
     if resource_json['resource_use_rights_label']&.start_with?('CC')
-      REQUIRED_FIELDS_RESOURCE_USE_RIGHTS.each do |name|
-        errors.add(name.to_sym, "Please enter the #{name.humanize.downcase}.") if resource_json[name].nil?
-      end
+      if resource_json['resource_use_rights_confirmations'].nil?
+        errors.add("resource_use_rights_confirmations".to_sym, "Please enter the resource_use_rights_confirmations.")
+      else
+        REQUIRED_FIELDS_RESOURCE_USE_RIGHTS.each do |name|
+          errors.add(name.to_sym, "Please enter the #{name.humanize.downcase}.") if resource_json['resource_use_rights_confirmations'][name].nil?
+        end
     end
+  end
   end
 
   def check_resource_use_rights
     return unless is_ui_request?  || self.errors.messages.blank?
-
     unless resource_json['resource_use_rights_label']&.start_with?('CC')
       REQUIRED_FIELDS_RESOURCE_USE_RIGHTS.each do |name|
         errors.add(name.to_sym, "When the value of 'resource_use_rights_label' is '#{resource_json['resource_use_rights_label']}', '#{name}' is not needed.") if resource_json.has_key? name

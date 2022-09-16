@@ -233,17 +233,8 @@
     "resource_use_rights_description": {
       "type": "string"
     },
-    "resource_use_rights_authors_confirmation_1": {
-      "type": ["boolean","null"]
-    },
-    "resource_use_rights_authors_confirmation_2": {
-      "type": ["boolean","null"]
-    },
-    "resource_use_rights_authors_confirmation_3": {
-      "type": ["boolean","null"]
-    },
-    "resource_use_rights_support_by_licencing": {
-      "type": ["boolean","null"]
+    "resource_use_rights_confirmations": {
+      "$ref": "#/resource_use_rights_confirmations"
     },
     "roles": {
       "$ref": "#/roles"
@@ -262,6 +253,23 @@
       "required": [
         "data_source"
       ]
+    }
+  },
+  "resource_use_rights_confirmations": {
+    "type": "object",
+    "properties": {
+      "resource_use_rights_authors_confirmation_1": {
+        "type": ["boolean","null"]
+      },
+      "resource_use_rights_authors_confirmation_2": {
+        "type": ["boolean","null"]
+      },
+      "resource_use_rights_authors_confirmation_3": {
+        "type": ["boolean","null"]
+      },
+      "resource_use_rights_support_by_licencing": {
+        "type": ["boolean","null"]
+      }
     }
   },
   "roles": {

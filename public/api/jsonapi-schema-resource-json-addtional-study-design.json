@@ -485,7 +485,15 @@
           "type": "string"
         },
         "study_data_sharing_plan_url": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/definitions/emptyString"
+            }
+          ]
         },
 
         "non_interventional_study_design": {

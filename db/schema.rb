@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_22_154144) do
+ActiveRecord::Schema.define(version: 2022_12_06_114653) do
 
   create_table "activity_logs", id: :integer, force: :cascade do |t|
     t.string "action"
@@ -1866,6 +1866,8 @@ ActiveRecord::Schema.define(version: 2022_11_22_154144) do
     t.datetime "updated_at", null: false
     t.integer "zenodo_deposition_id"
     t.string "zenodo_record_url"
+    t.string "snapshot_title"
+    t.text "snapshot_description"
   end
 
   create_table "sop_auth_lookup", force: :cascade do |t|

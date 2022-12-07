@@ -33,11 +33,11 @@ class Snapshot < ApplicationRecord
     @ro_metadata ||= parse_metadata
   end
 
-  def title
+  def m_title
     metadata['title']
   end
 
-  def description
+  def m_description
     metadata['description']
   end
 

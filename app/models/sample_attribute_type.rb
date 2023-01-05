@@ -101,6 +101,10 @@ class SampleAttributeType < ApplicationRecord
     base_type == Seek::Samples::BaseType::SEEK_DATA_FILE
   end
 
+  def seek_custom_metadata_type?
+    base_type == Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE
+  end
+
   def ontology?
     controlled_vocab? && title == 'Ontology'
   end

@@ -85,6 +85,9 @@ ontology_type.update(base_type: Seek::Samples::BaseType::CV)
 list_type = SampleAttributeType.find_or_initialize_by(title:'List')
 list_type.update(base_type: Seek::Samples::BaseType::LIST)
 
+cmt_type = SampleAttributeType.find_or_initialize_by(title:'Registered Custom Metadata Type')
+cmt_type.update(base_type: Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE)
+
 puts "Seeded #{SampleAttributeType.count - count} sample attribute types"
 
 # Sample types

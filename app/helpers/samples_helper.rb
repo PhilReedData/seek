@@ -30,6 +30,21 @@ module SamplesHelper
     end
   end
 
+  def linked_cmt_form_field(attribute,resource,value,element_name, element_class)
+
+    puts element_name.inspect
+    puts element_class.inspect
+    html = ''
+    # html +=  hidden_field_tag element_name, attribute.linked_custom_metadata_type_id
+    attribute.linked_custom_metadata_type.custom_metadata_attributes.each do |attr|
+      attr_element_name = "#{element_name}[#{attr.title}]"
+      html += '<div class="form-group"><label>'+attr.label+'</label>'
+      html +=  attribute_form_element(attr,resource,attr_element_name, element_class)
+      html += '</div>'
+      end
+    html.html_safe
+  end
+
   def list_select_form_field(attribute,element_name, values)
 
     sample_controlled_vocab =  attribute.sample_controlled_vocab
@@ -97,6 +112,8 @@ module SamplesHelper
         seek_cv_attribute_display(value, attribute)
       when Seek::Samples::BaseType::LIST
         value.join(", ")
+      when Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE
+        value.inspect
       else
         default_attribute_display(attribute, options, sample, value)
       end
@@ -272,6 +289,8 @@ module SamplesHelper
                  include_blank: !attribute.required?, class: "form-control #{element_class}"
     when Seek::Samples::BaseType::SEEK_SAMPLE_MULTI
       sample_multi_form_field attribute, element_name, value
+    when Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE
+      linked_cmt_form_field attribute, resource, value, element_name, element_class
     else
       text_field_tag element_name, value, class: "form-control #{element_class}", placeholder: placeholder
     end

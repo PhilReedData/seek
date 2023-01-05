@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_12_12_143407) do
+ActiveRecord::Schema.define(version: 2023_01_03_120834) do
 
   create_table "activity_logs", id: :integer, force: :cascade do |t|
     t.string "action"
@@ -393,6 +393,7 @@ ActiveRecord::Schema.define(version: 2022_12_12_143407) do
     t.bigint "sample_controlled_vocab_id"
     t.text "description"
     t.string "label"
+    t.integer "linked_custom_metadata_type_id"
     t.index ["custom_metadata_type_id"], name: "index_custom_metadata_attributes_on_custom_metadata_type_id"
     t.index ["sample_attribute_type_id"], name: "index_custom_metadata_attributes_on_sample_attribute_type_id"
     t.index ["sample_controlled_vocab_id"], name: "index_custom_metadata_attributes_on_sample_controlled_vocab_id"

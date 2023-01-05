@@ -607,18 +607,29 @@ class ApplicationController < ActionController::Base
       metadata_type = CustomMetadataType.find(attribute_params[:custom_metadata_type_id])
       if metadata_type
         keys = [:custom_metadata_type_id]
-        cma= []
-        metadata_type.custom_metadata_attributes.each do |attr|
-          if attr.sample_attribute_type.base_type == Seek::Samples::BaseType::LIST
-            cma << {attr.title=>[]}
-          else
-            cma << attr.title.to_s
-          end
-        end
-        keys = keys + [{data:[cma]}]
+        cma = determine_nested_keys(metadata_type)
+        keys = keys + [{data:cma}]
       end
     end
+
     keys
+
+  end
+
+  def determine_nested_keys(metadata_type)
+    cma= []
+    metadata_type.custom_metadata_attributes.each do |attr|
+      case attr.sample_attribute_type.base_type
+      when Seek::Samples::BaseType::LIST
+        cma << { attr.title => [] }
+      when Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE
+        linked_cma = determine_nested_keys(attr.linked_custom_metadata_type)
+        cma << { attr.title.to_sym => linked_cma }
+      else
+        cma << attr.title.to_s
+      end
+    end
+    cma
   end
 
   # Stop hosted user content from running scripts etc.

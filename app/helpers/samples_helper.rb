@@ -32,14 +32,14 @@ module SamplesHelper
 
   def linked_cmt_form_field(attribute,resource,value,element_name, element_class)
 
-    puts element_name.inspect
-    puts element_class.inspect
     html = ''
-    # html +=  hidden_field_tag element_name, attribute.linked_custom_metadata_type_id
+    html +=  hidden_field_tag "#{element_name}[linked_custom_metadata_id]", value
+    html +=  hidden_field_tag "#{element_name}[linked_custom_metadata_type_id]", attribute.linked_custom_metadata_type.id
+    resource = CustomMetadata.find(value) unless value.blank?
     attribute.linked_custom_metadata_type.custom_metadata_attributes.each do |attr|
-      attr_element_name = "#{element_name}[#{attr.title}]"
+      attr_element_name = "#{element_name}][value][#{attr.title}]"
       html += '<div class="form-group"><label>'+attr.label+'</label>'
-      html +=  attribute_form_element(attr,resource,attr_element_name, element_class)
+      html +=  attribute_form_element(attr, resource, attr_element_name, element_class)
       html += '</div>'
       end
     html.html_safe
@@ -113,7 +113,7 @@ module SamplesHelper
       when Seek::Samples::BaseType::LIST
         value.join(", ")
       when Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE
-        value.inspect
+        CustomMetadata.find(value).json_metadata
       else
         default_attribute_display(attribute, options, sample, value)
       end
@@ -241,7 +241,7 @@ module SamplesHelper
 
   private
 
-  def attribute_form_element(attribute, resource, element_name, element_class )
+  def attribute_form_element(attribute, resource, element_name, element_class)
     value = resource.get_attribute_value(attribute.title)
     placeholder = "e.g. #{attribute.sample_attribute_type.placeholder}" unless attribute.sample_attribute_type.placeholder.blank?
 

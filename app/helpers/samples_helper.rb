@@ -56,8 +56,7 @@ module SamplesHelper
       )
       select_tag element_name,
                  options,
-                 id: "custom_metadata_attributes_data_#{attribute.title}",
-                 class: "form-control",
+                 class: "form-control cv_list_attribute",
                  include_blank: "",
                  name: "#{element_name}[]",
                  multiple: "multiple"
@@ -110,7 +109,7 @@ module SamplesHelper
         seek_data_file_attribute_display(value)
       when Seek::Samples::BaseType::CV
         seek_cv_attribute_display(value, attribute)
-      when Seek::Samples::BaseType::LIST
+      when Seek::Samples::BaseType::CV_LIST
         value.join(", ")
       when Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE
         CustomMetadata.find(value).json_metadata
@@ -280,7 +279,7 @@ module SamplesHelper
       select_tag(element_name, options, include_blank: !attribute.required?, class: "form-control #{element_class}")
     when Seek::Samples::BaseType::CV
       controlled_vocab_form_field attribute.sample_controlled_vocab, element_name, value
-    when Seek::Samples::BaseType::LIST
+    when Seek::Samples::BaseType::CV_LIST
       list_select_form_field attribute, element_name, value
     when Seek::Samples::BaseType::SEEK_SAMPLE
       terms = attribute.linked_sample_type.samples.authorized_for('view').to_a

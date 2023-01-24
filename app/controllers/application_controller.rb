@@ -610,7 +610,7 @@ class ApplicationController < ActionController::Base
         cma= []
         metadata_type.custom_metadata_attributes.each do |attr|
           case attr.sample_attribute_type.base_type
-          when Seek::Samples::BaseType::LIST
+          when Seek::Samples::BaseType::CV_LIST
             cma << {attr.title=>[]}
           when Seek::Samples::BaseType::SEEK_CUSTOM_METADATA_TYPE
             cma << {attr.title=>{}}

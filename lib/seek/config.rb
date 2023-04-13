@@ -246,7 +246,8 @@ module Seek
     end
 
     def set_smtp_settings(field, value)
-      merge! :smtp, field => (value.blank? ? nil : value)
+      value = nil if value.is_a?(String) && value.blank?
+      merge! :smtp, field => value
       value
     end
 

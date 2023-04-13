@@ -56,7 +56,7 @@ class AdminController < ApplicationController
     Seek::Config.set_smtp_settings('authentication', params[:authentication]) if params.key?(:authentication)
     Seek::Config.set_smtp_settings('user_name', params[:smtp_user_name]) if params.key?(:smtp_user_name)
     Seek::Config.set_smtp_settings('password', params[:smtp_password]) if params.key?(:smtp_password)
-    Seek::Config.set_smtp_settings('enable_starttls_auto', params[:enable_starttls_auto] == '1') if params.key?(:enable_starttls_auto)
+    Seek::Config.set_smtp_settings('enable_starttls_auto', params[:enable_starttls_auto] == '1') if params.key?(:address)
 
     Seek::Config.support_email_address = params[:support_email_address] if params.key?(:support_email_address)
     Seek::Config.noreply_sender = params[:noreply_sender] if params.key?(:noreply_sender)

@@ -124,7 +124,8 @@ class AdminControllerTest < ActionController::TestCase
                                                  domain: 'email.example.com',
                                                  authentication: 'plain',
                                                  smtp_user_name: 'xyz',
-                                                 smtp_password: '123' }
+                                                 smtp_password: '123',
+                                                 enable_starttls_auto: '0' }
 
         assert_equal 'ActiveSupport::HashWithIndifferentAccess', Seek::Config.smtp.class.name
         assert Seek::Config.email_enabled

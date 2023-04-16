@@ -27,6 +27,8 @@ module Git
     end
 
     def fetch
+      opts = {}
+      opts[:proxy_url] = ENV['http_proxy'] if ENV['http_proxy'].present?
       git_base.remotes['origin'].fetch
       touch(:last_fetch)
     end

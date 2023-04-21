@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'minitest/mock'
 
 class ConfigTest < ActiveSupport::TestCase
   # Features enabled
@@ -613,6 +614,46 @@ class ConfigTest < ActiveSupport::TestCase
         assert_equal '/seeks/seek1/identities/auth/elixir_aai/callback', config[:callback_path]
         assert_equal 'http://localhost/seeks/seek1/identities/auth/elixir_aai/callback', config[:client_options][:redirect_uri]
       end
+    end
+  end
+
+  test 'http and https proxy' do
+    Seek::Config.stub(:environment_vars, { 'http_proxy' => 'http://myproxy:123' }) do
+      assert_equal 'http://myproxy:123', Seek::Config.http_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'HTTP_PROXY' => 'http://myproxy:456' }) do
+      assert_equal 'http://myproxy:456', Seek::Config.http_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'http_proxy' => 'http://myproxy:123', 'HTTP_PROXY' => 'http://myproxy:456' }) do
+      assert_equal 'http://myproxy:123', Seek::Config.http_proxy
+    end
+    Seek::Config.stub(:environment_vars, {}) do
+      assert_nil Seek::Config.http_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'https_proxy' => 'http://myproxy:123' }) do
+      assert_nil Seek::Config.http_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'http_proxy' => 'http://myproxy:123', 'HTTPS_PROXY' => 'http://myproxy:456' }) do
+      assert_equal 'http://myproxy:123', Seek::Config.http_proxy
+    end
+
+    Seek::Config.stub(:environment_vars, { 'https_proxy' => 'http://myproxy:123' }) do
+      assert_equal 'http://myproxy:123', Seek::Config.https_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'HTTPS_PROXY' => 'http://myproxy:456' }) do
+      assert_equal 'http://myproxy:456', Seek::Config.https_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'https_proxy' => 'http://myproxy:123', 'HTTPS_PROXY' => 'http://myproxy:456' }) do
+      assert_equal 'http://myproxy:123', Seek::Config.https_proxy
+    end
+    Seek::Config.stub(:environment_vars, {}) do
+      assert_nil Seek::Config.https_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'http_proxy' => 'http://myproxy:123' }) do
+      assert_nil Seek::Config.https_proxy
+    end
+    Seek::Config.stub(:environment_vars, { 'http_proxy' => 'http://myproxy:123', 'HTTPS_PROXY' => 'http://myproxy:456' }) do
+      assert_equal 'http://myproxy:456', Seek::Config.https_proxy
     end
   end
 end

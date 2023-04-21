@@ -7,7 +7,7 @@ module Seek
     def instance_admins_name_fallback
       instance_name
     end
-    
+
     def instance_admins_link_fallback
       instance_link
     end
@@ -381,6 +381,19 @@ module Seek
       providers[:openid_connect] = omniauth_elixir_aai_config if omniauth_elixir_aai_enabled
       providers[:github] = omniauth_github_config if omniauth_github_enabled
       providers
+    end
+
+    def http_proxy
+      environment_vars['http_proxy'].presence || environment_vars['HTTP_PROXY'].presence
+    end
+
+    def https_proxy
+      environment_vars['https_proxy'].presence || environment_vars['HTTPS_PROXY'].presence
+    end
+
+    # To make mocking easier for tests
+    def environment_vars
+      ENV
     end
   end
 

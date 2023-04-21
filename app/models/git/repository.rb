@@ -28,8 +28,9 @@ module Git
 
     def fetch
       opts = {}
-      opts[:proxy_url] = ENV['http_proxy'] if ENV['http_proxy'].present?
-      git_base.remotes['origin'].fetch
+      p = proxy_url
+      opts[:proxy_url] = p unless p.nil?
+      git_base.remotes['origin'].fetch(opts)
       touch(:last_fetch)
     end
 
@@ -78,6 +79,17 @@ module Git
     end
 
     private
+
+    def proxy_url
+      return nil unless remote?
+      if remote.start_with?('https:')
+        Seek::Config.https_proxy
+      elsif remote.start_with?('http:')
+        Seek::Config.http_proxy
+      else
+        nil
+      end
+    end
 
     def initialize_repository
       Git::Base.base_class.init(local_path)

@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'minitest/mock'
 
 class GitRepositoryTest < ActiveSupport::TestCase
 
@@ -54,5 +55,39 @@ class GitRepositoryTest < ActiveSupport::TestCase
 
     assert_includes repositories, redundant
     assert_not_includes repositories, not_redundant
+  end
+
+  test 'proxy_url' do
+      https_repo = Git::Repository.new(remote: 'https://github.com/seek4science/workflow-test-fixture.git')
+      http_repo = Git::Repository.new(remote: 'http://github.com/seek4science/workflow-test-fixture.git')
+      local_repo = Git::Repository.new
+      ssh_repo = Git::Repository.new(remote: 'git@github.com:seek4science/seek.git') # We don't support this
+
+    Seek::Config.stub(:environment_vars, {
+      'http_proxy' => 'http://myproxy:123',
+      'HTTP_PROXY' => 'http://myproxy:456',
+      'https_proxy' => 'http://myproxy:789',
+      'HTTPS_PROXY' => 'http://myproxy:1337' }) do
+      assert_equal 'http://myproxy:789', https_repo.send(:proxy_url)
+      assert_equal 'http://myproxy:123', http_repo.send(:proxy_url)
+      assert_nil local_repo.send(:proxy_url)
+      assert_nil ssh_repo.send(:proxy_url)
+    end
+
+    Seek::Config.stub(:environment_vars, {
+      'HTTP_PROXY' => 'http://myproxy:456',
+      'HTTPS_PROXY' => 'http://myproxy:1337' }) do
+      assert_equal 'http://myproxy:1337', https_repo.send(:proxy_url)
+      assert_equal 'http://myproxy:456', http_repo.send(:proxy_url)
+      assert_nil local_repo.send(:proxy_url)
+      assert_nil ssh_repo.send(:proxy_url)
+    end
+
+    Seek::Config.stub(:environment_vars, {}) do
+      assert_nil https_repo.send(:proxy_url)
+      assert_nil http_repo.send(:proxy_url)
+      assert_nil local_repo.send(:proxy_url)
+      assert_nil ssh_repo.send(:proxy_url)
+    end
   end
 end

@@ -605,7 +605,6 @@ class ApplicationController < ActionController::Base
 
   end
 
-  # todo currently 2-level nested attributes are tested, we would like to test if it also works with more level nested attributes
   def recursive_determine_custom_metadata_keys(attribute_params)
     keys = []
     if attribute_params && attribute_params[:custom_metadata_type_id].present?
@@ -619,6 +618,8 @@ class ApplicationController < ActionController::Base
             cma << attr.title.to_s
           elsif  attr.linked_custom_metadata?
             cma << { attr.title => recursive_determine_custom_metadata_keys(attribute_params[:data][attr.title.to_sym])}
+          elsif attr.linked_custom_metadata_multi?
+            cma << { attr.title => [recursive_determine_custom_metadata_keys(attribute_params[:data][attr.title.to_sym])]}
           else
             cma << attr.title.to_s
           end

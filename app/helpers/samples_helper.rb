@@ -51,6 +51,11 @@ module SamplesHelper
     controlled_vocab_form_field(sample_controlled_vocab, element_name, values, nil)
   end
 
+  def linked_custom_metadata_multi_form_field(resource, value, attribute, element_name, element_class)
+    render :partial => 'custom_metadata/fancy_linked_custom_metadata_multi_attribute_fields',
+           :locals=> {:resource=>resource, :attribute => attribute,:element_name => element_name,:element_class => element_class, :value => value,:collapsed=>false}
+  end
+
   def linked_custom_metadata_form_field(attribute,resource,element_name, element_class,depth)
     linked_cms = resource.linked_custom_metadatas.select{|cm|cm.custom_metadata_attribute==attribute}
 
@@ -135,6 +140,8 @@ module SamplesHelper
         value.each{|v| seek_cv_attribute_display(v, attribute) }.join(', ')
       when Seek::Samples::BaseType::LINKED_CUSTOM_METADATA
         linked_custom_metadata_attribute_display(value)
+      when Seek::Samples::BaseType::LINKED_CUSTOM_METADATA_MULTI
+        linked_custom_metadata_multi_attribute_display(value)
       else
         default_attribute_display(attribute, options, sample, value)
       end
@@ -160,6 +167,14 @@ module SamplesHelper
        html += '</li>'
       end
     html += '</ul>'
+    html.html_safe
+  end
+
+  def linked_custom_metadata_multi_attribute_display(values)
+    html = ''
+    values.each do |value|
+      html += linked_custom_metadata_attribute_display(value)
+    end
     html.html_safe
   end
 
@@ -325,6 +340,8 @@ module SamplesHelper
       sample_multi_form_field attribute, element_name, value
     when Seek::Samples::BaseType::LINKED_CUSTOM_METADATA
       linked_custom_metadata_form_field attribute, resource, element_name, element_class,depth
+    when Seek::Samples::BaseType::LINKED_CUSTOM_METADATA_MULTI
+      linked_custom_metadata_multi_form_field resource, value, attribute, element_name, element_class
     else
       text_field_tag element_name, value, class: "form-control #{element_class}", placeholder: placeholder
     end

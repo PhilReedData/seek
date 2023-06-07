@@ -18,8 +18,9 @@ module Seek
       end
 
       def get_attribute_value(attr)
-        if attr.try(:sample_attribute_type).try(:linked_custom_metadata?)
-          value = self.linked_custom_metadatas.select{|cm| cm.custom_metadata_type_id == attr.linked_custom_metadata_type_id}.select{|cm|cm.custom_metadata_attribute == attr}.first
+        if attr.try(:sample_attribute_type) && (attr.linked_custom_metadata? || attr.linked_custom_metadata_multi?)
+          values = self.linked_custom_metadatas.select{|cm| cm.custom_metadata_type_id == attr.linked_custom_metadata_type_id}.select{|cm|cm.custom_metadata_attribute == attr}
+          value = attr.linked_custom_metadata? ? values.first : values
         else
           attr = attr.accessor_name if attr.is_a?(attribute_class)
           value = data[attr.to_s]

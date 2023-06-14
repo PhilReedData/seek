@@ -14,31 +14,50 @@ class CustomMetadata < ApplicationRecord
 
   delegate :custom_metadata_attributes, to: :custom_metadata_type
 
+  after_save :update_ids_for_the_type_linked_custom_metadata, if: :has_attr_type_linked_custom_metadata?
+  after_save :update_ids_with_attribute_type_linked_custom_metadata_multi, if: :has_attr_type_linked_custom_metadata_multi?
 
-  after_save :update_linked_custom_metadata_id, if: :has_linked_custom_metadatas?
+  # for polymorphic behaviour with sample
+  alias_method :metadata_type, :custom_metadata_type
 
-  def update_linked_custom_metadata_id
+
+  def update_ids_for_the_type_linked_custom_metadata
     linked_custom_metadatas.each do |cm|
       attr_name = cm.custom_metadata_attribute.title
       if cm.custom_metadata_attribute.linked_custom_metadata?
         data.mass_assign(data.to_hash.update({attr_name => cm.id}), pre_process: false)
-      elsif cm.custom_metadata_attribute.linked_custom_metadata_multi?
-        ids = data[attr_name].nil? ? [] : data[attr_name]
-        ids = ids.append(cm.id)
-        data.mass_assign(data.to_hash.update({attr_name => ids}), pre_process: false)
       end
       update_column(:json_metadata, data.to_json)
-      self.item.reload
     end
+  end
+
+  def update_ids_with_attribute_type_linked_custom_metadata_multi
+    linked_custom_metadatas.map(&:custom_metadata_attribute).select{|attr| attr.linked_custom_metadata_multi?}.uniq.each do |attr|
+
+
+      ids = linked_custom_metadatas.select{|cm| cm.custom_metadata_attribute == attr }.pluck(:id)
+      data.mass_assign(data.to_hash.update({attr.title => ids}), pre_process: false)
+    end
+    update_column(:json_metadata, data.to_json)
   end
 
   def has_linked_custom_metadatas?
     linked_custom_metadatas.any?
   end
 
+  def has_attr_type_linked_custom_metadata?
+    custom_metadata_attributes.select(&:linked_custom_metadata?).any?
+  end
 
-  # for polymorphic behaviour with sample
-  alias_method :metadata_type, :custom_metadata_type
+
+  def has_attr_type_linked_custom_metadata_multi?
+    custom_metadata_attributes.select(&:linked_custom_metadata_multi?).any?
+  end
+
+  def get_linked_custom_metadatas_multi_by_attr(attr_id,cm)
+    cm.select { |cm| cm.custom_metadata_attribute_id == attr_id }
+  end
+
 
   def custom_metadata_type=(type)
     super
@@ -62,6 +81,8 @@ class CustomMetadata < ApplicationRecord
     seek_linked_cm_attrs&.each  do |cma|
       cma_params = parameters[:data][cma.title.to_sym]
       set_linked_custom_metadatas(cma, cma_params) unless cma_params.nil?
+
+      #todo: check multi level attr ???? don't understand what is this doing
       cma_linked_cmt =  cma.linked_custom_metadata_type.attributes_with_linked_custom_metadata_type
 
       unless cma_linked_cmt.blank?
@@ -75,6 +96,16 @@ class CustomMetadata < ApplicationRecord
   def set_linked_custom_metadatas(cma, cm_params)
 
     if cma.linked_custom_metadata_multi?
+      unless self.new_record?
+        current_linked_cm_ids = data[cma.title].values.pluck(:id).map(&:to_i)
+        previous_linked_cm_ids = CustomMetadata.find(id).data[cma.title]
+        ids_to_delete = previous_linked_cm_ids - current_linked_cm_ids
+
+        ids_to_delete&.each do |element|
+          CustomMetadata.find(element).destroy
+        end
+      end
+
       keys = cm_params.keys
       keys.delete("row-template")
       keys.each do |index|

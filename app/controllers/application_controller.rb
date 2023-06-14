@@ -619,7 +619,7 @@ class ApplicationController < ActionController::Base
           elsif  attr.linked_custom_metadata?
             cma << { attr.title => recursive_determine_custom_metadata_keys(attribute_params[:data][attr.title.to_sym])}
           elsif attr.linked_custom_metadata_multi?
-            cma << { attr.title => [recursive_determine_custom_metadata_keys(attribute_params[:data][attr.title.to_sym])]}
+            cma << { attr.title => [recursive_determine_custom_metadata_keys(attribute_params[:data][attr.title.to_sym]['0']) ]}
           else
             cma << attr.title.to_s
           end

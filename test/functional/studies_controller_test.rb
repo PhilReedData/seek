@@ -1013,6 +1013,7 @@ class StudiesControllerTest < ActionController::TestCase
                                                       custom_metadata_attributes: {
                                                         custom_metadata_type_id: cmt.id, id:cm.id, data: {
                                                           "dad": {
+                                                            id:cm_ids[0],
                                                             custom_metadata_type_id:linked_cmts[0].linked_custom_metadata_type.id,
                                                             custom_metadata_attribute_id:linked_cmts[0].id,
                                                             data:{
@@ -1021,6 +1022,7 @@ class StudiesControllerTest < ActionController::TestCase
                                                             }
                                                           },
                                                           "child": {
+                                                            id:cm_ids[2],
                                                             custom_metadata_type_id:linked_cmts[2].linked_custom_metadata_type.id,
                                                             custom_metadata_attribute_id:linked_cmts[2].id,
                                                             data:{

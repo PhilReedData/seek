@@ -996,6 +996,7 @@ class StudiesControllerTest < ActionController::TestCase
     assert study = assigns(:study)
     assert cm = study.custom_metadata
     assert_equal cmt, cm.custom_metadata_type
+    cm_ids = cm.linked_custom_metadata_ids
 
     assert_equal "john",cm.linked_custom_metadatas[0].get_attribute_value('first_name')
     assert_equal "liddell",cm.linked_custom_metadatas[0].get_attribute_value('last_name')
@@ -1134,6 +1135,60 @@ class StudiesControllerTest < ActionController::TestCase
 
   end
 
+
+  test 'should create and update study with linked custom metadata multi types' do
+    cmt = FactoryBot.create(:role_affiliation_custom_metadata_type)
+    login_as(FactoryBot.create(:person))
+    linked_cmt = cmt.attributes_with_linked_custom_metadata_type.first.linked_custom_metadata_type
+    linked_cma = cmt.attributes_with_linked_custom_metadata_type.first
+    ##<ActionController::Parameters {"title"=>"s2", "description"=>"", "custom_metadata_attributes"=>{"custom_metadata_type_id"=>"22", "id"=>"8",
+    # "data"=>{"role_affiliation_name"=>"fsad", "role_affiliation_identifier"=>{"id"=>"9",
+    # "custom_metadata_type_id"=>"21", "custom_metadata_attribute_id"=>"78", "data"=>{"identifier"=>"1", "scheme"=>"1"}},
+    #
+    #
+    #
+    # "role_affiliation_identifiers"=>{"0"=>{"id"=>"10", "custom_metadata_type_id"=>"21", "custom_metadata_attribute_id"=>"79", "data"=>{"identifier"=>"a", "scheme"=>"a"}},
+    # "1"=>{"id"=>"12", "custom_metadata_type_id"=>"21", "custom_metadata_attribute_id"=>"79", "data"=>{"identifier"=>"b", "scheme"=>"b"}},
+    # "row-template"=>{"id"=>"", "custom_metadata_type_id"=>"21", "custom_metadata_attribute_id"=>"79", "data"=>{"identifier"=>"", "scheme"=>""}}}}},
+    # "investigation_id"=>"1", "position"=>"", "publication_ids"=>[""]} permitted: false>
+
+    assert_difference('Study.count') do
+      assert_difference('CustomMetadata.count',3) do
+        investigation = FactoryBot.create(:investigation,projects:User.current_user.person.projects,contributor:User.current_user.person)
+        study_attributes = { title: 'study', investigation_id: investigation.id }
+        cm_attributes = { custom_metadata_attributes: {
+          custom_metadata_type_id: cmt.id, data: {
+            "role_affiliation_name":"affiliation_name",
+            "role_affiliation_identifiers":{
+                                        "0":{
+                                          "custom_metadata_type_id": linked_cmt.id,
+                                          "custom_metadata_attribute_id":linked_cma.id,
+                                          "data":{"identifier":"a", "scheme":"a"}
+                                        },
+                                        "1":{
+                                          "custom_metadata_type_id": linked_cmt.id,
+                                          "custom_metadata_attribute_id":linked_cma.id,
+                                          "data":{"identifier":"b", "scheme":"b"}
+                                        }
+
+            }
+          }
+        }
+        }
+        post :create, params: { study: study_attributes.merge(cm_attributes), sharing: valid_sharing }
+      end
+    end
+
+    assert study = assigns(:study)
+    assert cm = study.custom_metadata
+    assert_equal cmt, cm.custom_metadata_type
+
+    pp study
+    pp cm
+    pp cm.data
+
+
+  end
 
   test 'experimentalists only shown if set' do
     person = FactoryBot.create(:person)

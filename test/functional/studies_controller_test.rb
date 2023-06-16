@@ -1136,6 +1136,64 @@ class StudiesControllerTest < ActionController::TestCase
   end
 
 
+  test 'when removing the study with the custom metadata, all its related custom metadtas should be destroyed' do
+    cmt = FactoryBot.create(:role_affiliation_custom_metadata_type)
+    login_as(FactoryBot.create(:person))
+    linked_cmt = cmt.attributes_with_linked_custom_metadata_type.first.linked_custom_metadata_type
+    linked_cma = cmt.attributes_with_linked_custom_metadata_type.first
+
+
+    assert_difference('Study.count') do
+      assert_difference('CustomMetadata.count',3) do
+        assert_difference('CustomMetadataResourceLink.count',2) do
+        investigation = FactoryBot.create(:investigation,projects:User.current_user.person.projects,contributor:User.current_user.person)
+        study_attributes = { title: 'my study', investigation_id: investigation.id }
+        cm_attributes = { custom_metadata_attributes: {
+          custom_metadata_type_id: cmt.id,
+          data: {
+            "role_affiliation_name":"HITS",
+            "role_affiliation_identifiers":{
+              "0":{
+                "custom_metadata_type_id": linked_cmt.id,
+                "custom_metadata_attribute_id":linked_cma.id,
+                "data":{"identifier":"01f7bcy98", "scheme":"ROR"}
+              },
+              "1":{
+                "custom_metadata_type_id": linked_cmt.id,
+                "custom_metadata_attribute_id":linked_cma.id,
+                "data":{"identifier":"grid.424699.4", "scheme":"GRID"}
+              }
+
+            }
+          }
+        }
+        }
+        post :create, params: { study: study_attributes.merge(cm_attributes), sharing: valid_sharing }
+        end
+      end
+    end
+
+    assert study = assigns(:study)
+    assert_equal 2, study.custom_metadata.linked_custom_metadatas.count
+
+
+
+    assert_difference('Study.count', -1) do
+      assert_difference('CustomMetadata.count',-3) do
+        assert_difference('CustomMetadataResourceLink.count',-2) do
+           delete :destroy, params: { id: study.id }
+        end
+      end
+    end
+
+    assert !flash[:error]
+    assert_redirected_to studies_path
+    assert_equal 0, study.custom_metadata.linked_custom_metadatas.count
+
+  end
+
+
+
   test 'should create and update study with linked custom metadata multi types' do
     cmt = FactoryBot.create(:role_affiliation_custom_metadata_type)
     login_as(FactoryBot.create(:person))
@@ -1152,16 +1210,16 @@ class StudiesControllerTest < ActionController::TestCase
           data: {
             "role_affiliation_name":"HITS",
             "role_affiliation_identifiers":{
-                                        "0":{
-                                          "custom_metadata_type_id": linked_cmt.id,
-                                          "custom_metadata_attribute_id":linked_cma.id,
-                                          "data":{"identifier":"01f7bcy98", "scheme":"ROR"}
-                                        },
-                                        "1":{
-                                          "custom_metadata_type_id": linked_cmt.id,
-                                          "custom_metadata_attribute_id":linked_cma.id,
-                                          "data":{"identifier":"grid.424699.4", "scheme":"GRID"}
-                                        }
+              "0":{
+                "custom_metadata_type_id": linked_cmt.id,
+                "custom_metadata_attribute_id":linked_cma.id,
+                "data":{"identifier":"01f7bcy98", "scheme":"ROR"}
+              },
+              "1":{
+                "custom_metadata_type_id": linked_cmt.id,
+                "custom_metadata_attribute_id":linked_cma.id,
+                "data":{"identifier":"grid.424699.4", "scheme":"GRID"}
+              }
 
             }
           }
@@ -1284,9 +1342,7 @@ class StudiesControllerTest < ActionController::TestCase
     cm = new_study.custom_metadata
     assert_equal cmt, cm.custom_metadata_type
 
-    pp "****************update 2********************"
-    pp cm.data
-    pp cm.linked_custom_metadata_ids
+
 
     assert_equal 'University of Manchester',cm.get_attribute_value('role_affiliation_name')
     assert_equal '027m9bs27', cm.linked_custom_metadatas[0].get_attribute_value('identifier')
@@ -1338,11 +1394,6 @@ class StudiesControllerTest < ActionController::TestCase
     new_study.reload
     cm = new_study.custom_metadata
     assert_equal cmt, cm.custom_metadata_type
-
-    pp "****************update 3********************"
-
-    pp cm.data
-    pp cm.linked_custom_metadata_ids
 
     assert_equal 'Updated Study', new_study.title
     assert_equal 'University of Manchester',cm.get_attribute_value('role_affiliation_name')

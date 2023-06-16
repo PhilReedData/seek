@@ -6,8 +6,8 @@ class CustomMetadata < ApplicationRecord
   belongs_to :custom_metadata_attribute
 
   has_many :custom_metadata_resource_links, inverse_of: :custom_metadata, dependent: :destroy
-  has_many :linked_custom_metadatas, through: :custom_metadata_resource_links, source: :resource, source_type: 'CustomMetadata', dependent: :destroy
-  accepts_nested_attributes_for :linked_custom_metadatas
+  has_many :linked_custom_metadatas, through: :custom_metadata_resource_links, source: :resource, source_type: 'CustomMetadata'
+  accepts_nested_attributes_for :linked_custom_metadatas, allow_destroy: true
 
   validates_with CustomMetadataValidator
   validates_associated :linked_custom_metadatas

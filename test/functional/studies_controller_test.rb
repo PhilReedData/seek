@@ -1176,6 +1176,7 @@ class StudiesControllerTest < ActionController::TestCase
     assert_redirected_to study_path(study)
     study.reload
 
+
     cm = study.custom_metadata
     assert_equal cmt, cm.custom_metadata_type
 
@@ -1238,6 +1239,119 @@ class StudiesControllerTest < ActionController::TestCase
     assert_equal 'grid.5379.8', cm.linked_custom_metadatas.last.get_attribute_value('identifier')
     assert_equal 'GRID', cm.linked_custom_metadatas.last.get_attribute_value('scheme')
     assert_equal  cm.data['role_affiliation_identifiers'], [cm.linked_custom_metadatas.first.id, cm.linked_custom_metadatas.last.id]
+
+    # test update: adding an element in the array of linked custom metadatas
+    assert_no_difference('Study.count') do
+      assert_difference('CustomMetadata.count') do
+        put :update, params: {
+          id: study.id,
+          study: {
+            title: 'Updated Study',
+            custom_metadata_attributes: {
+              id:cm.id,
+              custom_metadata_type_id: cmt.id,
+              data: {
+                "role_affiliation_name": "University of Manchester",
+                "role_affiliation_identifiers": {
+                  "0": {
+                    id:cm.linked_custom_metadatas.first.id,
+                    "custom_metadata_type_id": linked_cmt.id,
+                    "custom_metadata_attribute_id": linked_cma.id,
+                    "data": { "identifier": "027m9bs27", "scheme": "ROR" }
+                  },
+                  "1": {
+                    id:cm.linked_custom_metadatas.last.id,
+                    "custom_metadata_type_id": linked_cmt.id,
+                    "custom_metadata_attribute_id": linked_cma.id,
+                    "data": { "identifier": "grid.5379.8", "scheme": "GRID" }
+                  },
+                  "2": {
+                    "custom_metadata_type_id": linked_cmt.id,
+                    "custom_metadata_attribute_id": linked_cma.id,
+                    "data": { "identifier": "0000 0001 2166 2407", "scheme": "ISNI" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      end
+    end
+
+    assert new_study = assigns(:study)
+    assert_redirected_to study_path(new_study)
+    new_study.reload
+    cm = new_study.custom_metadata
+    assert_equal cmt, cm.custom_metadata_type
+
+    pp "****************update 2********************"
+    pp cm.data
+    pp cm.linked_custom_metadata_ids
+
+    assert_equal 'University of Manchester',cm.get_attribute_value('role_affiliation_name')
+    assert_equal '027m9bs27', cm.linked_custom_metadatas[0].get_attribute_value('identifier')
+    assert_equal 'ROR', cm.linked_custom_metadatas[0].get_attribute_value('scheme')
+    assert_equal 'grid.5379.8', cm.linked_custom_metadatas[1].get_attribute_value('identifier')
+    assert_equal 'GRID', cm.linked_custom_metadatas[1].get_attribute_value('scheme')
+    assert_equal '0000 0001 2166 2407', cm.linked_custom_metadatas[2].get_attribute_value('identifier')
+    assert_equal 'ISNI', cm.linked_custom_metadatas[2].get_attribute_value('scheme')
+    assert_equal  cm.data['role_affiliation_identifiers'], [cm.linked_custom_metadatas[0].id,cm.linked_custom_metadatas[1].id,cm.linked_custom_metadatas[2].id]
+
+
+    # test update: adding an element and at the same time removing two elements in the array of linked custom metadatas
+    assert_no_difference('Study.count') do
+      assert_difference('CustomMetadata.count', -1) do
+
+        put :update, params: {
+          id: study.id,
+          study: {
+            title: 'Updated Study',
+            custom_metadata_attributes: {
+              id:cm.id,
+              custom_metadata_type_id: cmt.id,
+              data: {
+                "role_affiliation_name": "University of Manchester",
+                "role_affiliation_identifiers": {
+                  "0": {
+                    id:cm.linked_custom_metadatas[0].id,
+                    "custom_metadata_type_id": linked_cmt.id,
+                    "custom_metadata_attribute_id": linked_cma.id,
+                    "data": { "identifier": "027m9bs27", "scheme": "ROR" }
+                  },
+                  # new element
+                  "1": {
+                    "custom_metadata_type_id": linked_cmt.id,
+                    "custom_metadata_attribute_id": linked_cma.id,
+                    "data": { "identifier": "Q230899", "scheme": "Wikidata" }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+      end
+    end
+
+    assert new_study = assigns(:study)
+    assert_redirected_to study_path(new_study)
+    new_study.reload
+    cm = new_study.custom_metadata
+    assert_equal cmt, cm.custom_metadata_type
+
+    pp "****************update 3********************"
+
+    pp cm.data
+    pp cm.linked_custom_metadata_ids
+
+    assert_equal 'Updated Study', new_study.title
+    assert_equal 'University of Manchester',cm.get_attribute_value('role_affiliation_name')
+    assert_equal '027m9bs27', cm.linked_custom_metadatas.first.get_attribute_value('identifier')
+    assert_equal 'ROR', cm.linked_custom_metadatas.first.get_attribute_value('scheme')
+    assert_equal 'Q230899', cm.linked_custom_metadatas.last.get_attribute_value('identifier')
+    assert_equal 'Wikidata', cm.linked_custom_metadatas.last.get_attribute_value('scheme')
+    assert_equal  cm.data['role_affiliation_identifiers'], [cm.linked_custom_metadatas.first.id, cm.linked_custom_metadatas.last.id]
+
 
   end
 

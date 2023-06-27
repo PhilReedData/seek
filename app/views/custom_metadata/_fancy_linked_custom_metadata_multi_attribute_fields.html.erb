@@ -26,7 +26,7 @@
     </div>
 
     <div id="new-<%= key.singularize %>-row" style="display: none">
-      <%= render :partial => 'custom_metadata/single_row', :locals => { :resource => CustomMetadata.new, :attribute => attribute, :element_name => element_name, :element_class => element_class } %>
+      <%= render :partial => 'custom_metadata/single_row', :locals => { :resource => CustomMetadata.new(custom_metadata_type: resource.custom_metadata_type, custom_metadata_attribute: resource.custom_metadata_attribute), :attribute => attribute, :element_name => element_name, :element_class => element_class } %>
     </div>
   </div>
 <% end %>

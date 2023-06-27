@@ -1,5 +1,6 @@
 <% key = attribute.title  %>
 <% row ||= nil %>
+<% id = resource[:id]  %>
 <% index ||= 'row-template' %>
 <% allow_row_removal = (index == 0 ? false : true ) %>
 <% field_name_prefix = "#{element_name}[#{index}]" %>

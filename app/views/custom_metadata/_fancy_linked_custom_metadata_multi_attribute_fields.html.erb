@@ -1,15 +1,20 @@
-<% key=attribute.title %>
+<% key = attribute.title %>
 
-<%= folding_panel(attribute.label, collapsed, :body_options => {:id => key }) do %>
+<%= folding_panel(attribute.label, collapsed, :body_options => { :id => key }) do %>
   <div id="<%= key %>">
     <div class="table" id="<%= key.singularize %>-table">
       <% if value.blank? %>
         <%= render :partial => "custom_metadata/single_row",
-                   :locals=> {:id=>nil, :index => 0, :resource=>resource, :attribute => attribute,:element_name => element_name,:element_class => element_class} %>
+                   :locals => { :index => 0, :resource => resource, :attribute => attribute, :element_name => element_name, :element_class => element_class } %>
       <% else %>
-        <% value.each_with_index do |cm_id, index| %>
-          <%= render :partial => 'custom_metadata/single_row', :locals=> {:id=> cm_id, :key => key, :index => index,:resource=>CustomMetadata.find(cm_id),
-                                                                          :attribute => attribute,:element_name => element_name,:element_class => element_class} %>
+        <% value.each_with_index do |linked_cm, index| %>
+          <% if value.is_a?(Array) %>
+            <% resource = CustomMetadata.find(value[index]) %>
+          <% elsif value.is_a?(Hash) %>
+            <% resource = value[index.to_s][:id].blank? ? CustomMetadata.new(value[index.to_s]) : CustomMetadata.find(value[index.to_s][:id]) %>
+          <% end %>
+          <%= render :partial => 'custom_metadata/single_row', :locals => { :key => key, :index => index, :resource => resource,
+                                                                            :attribute => attribute, :element_name => element_name, :element_class => element_class } %>
         <% end %>
       <% end %>
 
@@ -21,7 +26,7 @@
     </div>
 
     <div id="new-<%= key.singularize %>-row" style="display: none">
-      <%= render :partial => 'custom_metadata/single_row', :locals=> {:id=>nil, :resource=>resource, :attribute => attribute,:element_name => element_name,:element_class => element_class} %>
+      <%= render :partial => 'custom_metadata/single_row', :locals => { :resource => CustomMetadata.new, :attribute => attribute, :element_name => element_name, :element_class => element_class } %>
     </div>
   </div>
 <% end %>

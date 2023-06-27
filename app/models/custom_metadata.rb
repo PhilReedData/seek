@@ -14,7 +14,7 @@ class CustomMetadata < ApplicationRecord
 
   delegate :custom_metadata_attributes, to: :custom_metadata_type
 
-  after_save :update_ids_for_the_type_linked_custom_metadata, if: :has_attr_type_linked_custom_metadata?
+  after_create :update_ids_for_the_type_linked_custom_metadata, if: :has_attr_type_linked_custom_metadata?
   after_save :update_ids_with_attribute_type_linked_custom_metadata_multi, if: :has_attr_type_linked_custom_metadata_multi?
 
   # for polymorphic behaviour with sample

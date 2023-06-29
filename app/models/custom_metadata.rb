@@ -100,10 +100,7 @@ class CustomMetadata < ApplicationRecord
         current_linked_cm_ids = data[cma.title].values.pluck(:id).map(&:to_i)
         previous_linked_cm_ids = CustomMetadata.find(id).data[cma.title]
         ids_to_delete = previous_linked_cm_ids - current_linked_cm_ids
-
-        ids_to_delete&.each do |id|
-          CustomMetadata.find(id)&.destroy
-        end
+        self.linked_custom_metadatas.load_target.select{|cm| ids_to_delete.include? cm.id}.each(&:mark_for_destruction)
       end
 
       keys = cm_params.keys

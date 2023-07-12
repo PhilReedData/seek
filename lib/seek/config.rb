@@ -382,6 +382,10 @@ module Seek
       providers[:github] = omniauth_github_config if omniauth_github_enabled
       providers
     end
+
+    def project_credit
+      true
+    end
   end
 
   # The inner wiring. Ideally this should be hidden away,

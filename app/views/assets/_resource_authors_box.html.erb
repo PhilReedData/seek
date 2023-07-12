@@ -3,11 +3,13 @@
 <%# - assets_creators - collection of AssetsCreators to which the resource is attributed -%>
 <%# - title - the title of the box (defaults to Creators if missing) -%>
 <%
-  title ||= "#{t('creator').capitalize.pluralize} and #{t('contributor').capitalize}"
+  title ||= Seek::Config.project_credit ?
+              "Credits" : "#{t('creator').capitalize.pluralize} and #{t('contributor').capitalize}"
   contributor = resource.contributor
   assets_creators ||= resource.assets_creators
   other_creators ||= resource.respond_to?(:other_creators) ? resource.other_creators : nil
   avatar_size ||= 20
+  project_avatar_size ||= 40
 %>
 
 <%= panel(title, id: 'author-box',
@@ -58,4 +60,16 @@
       <% end %>
     </li>
   </ul>
+
+  <% if Seek::Config.project_credit && resource.respond_to?(:projects) %>
+    <h5 class="author-list-title"><%= t('project').capitalize.pluralize(resource.projects.count) -%></h5>
+    <ul class="author-list">
+      <% resource.projects.each do |project| %>
+        <li class="project-list-item">
+          <%= favouritable_icon(project, project_avatar_size) -%>
+          <%= link_to(project.title, project) %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>

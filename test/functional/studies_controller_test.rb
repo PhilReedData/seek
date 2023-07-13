@@ -1562,7 +1562,6 @@ class StudiesControllerTest < ActionController::TestCase
     study.reload
     cm = study.custom_metadata
 
-    pp study
 
     #  should not update when the investigation is deleted
     assert_no_difference('Study.count') do
@@ -1615,7 +1614,7 @@ class StudiesControllerTest < ActionController::TestCase
     assert_equal 'ROR', cm.linked_custom_metadatas.first.get_attribute_value('scheme')
     assert_equal 'grid.424699.4', cm.linked_custom_metadatas.last.get_attribute_value('identifier')
     assert_equal 'GRID', cm.linked_custom_metadatas.last.get_attribute_value('scheme')
-    pp cm.linked_custom_metadatas
+
     assert_equal 2,cm.linked_custom_metadatas.size
 
     # should show error message
@@ -1644,6 +1643,128 @@ class StudiesControllerTest < ActionController::TestCase
     assert_select "input[id^='study_custom_metadata_attributes_data_role_affiliation_identifiers_'][id$='_data_scheme'][value=?]",'Wikidata'
 
   end
+
+  test 'should not update a study and reload the form for missing required linked custom metadata values' do
+
+    cmt = FactoryBot.create(:role_affiliation_custom_metadata_type)
+    login_as(FactoryBot.create(:person))
+    linked_cmt = cmt.attributes_with_linked_custom_metadata_type.first.linked_custom_metadata_type
+    linked_cma = cmt.attributes_with_linked_custom_metadata_type.first
+    investigation = FactoryBot.create(:investigation,projects:User.current_user.person.projects,contributor:User.current_user.person)
+    study_attributes = { title: 'my study', investigation_id: investigation.id }
+
+
+    cm_attributes = { custom_metadata_attributes: {
+      custom_metadata_type_id: cmt.id,
+      data: {
+        "role_affiliation_name":"HITS",
+        "role_affiliation_identifiers":{
+          "0":{
+            "custom_metadata_type_id": linked_cmt.id,
+            "custom_metadata_attribute_id":linked_cma.id,
+            "data":{"identifier":"01f7bcy98", "scheme":"ROR"}
+          },
+          "1":{
+            "custom_metadata_type_id": linked_cmt.id,
+            "custom_metadata_attribute_id":linked_cma.id,
+            "data":{"identifier":"grid.424699.4", "scheme":"GRID"}
+          }
+
+        }
+      }
+    }
+    }
+    post :create, params: { study: study_attributes.merge(cm_attributes), sharing: valid_sharing }
+
+    assert study = assigns(:study)
+    assert_redirected_to study_path(study)
+    study.reload
+    cm = study.custom_metadata
+
+    #  should not update when the required linked custom metadata is missing
+    assert_no_difference('Study.count') do
+      assert_no_difference('CustomMetadata.count') do
+        assert_no_difference('CustomMetadataResourceLink.count') do
+          put :update, params: {
+            id: study.id,
+            study: {
+              title: 'my new study title',
+              custom_metadata_attributes: {
+                id:cm.id,
+                custom_metadata_type_id: cmt.id,
+                data: {
+                  "role_affiliation_name": "University of Manchester",
+                  "role_affiliation_identifiers": {
+                    "0": {
+                      id:cm.linked_custom_metadatas.first.id,
+                      "custom_metadata_type_id": linked_cmt.id,
+                      "custom_metadata_attribute_id": linked_cma.id,
+                      "data": { "identifier": "", "scheme": "ROR" }
+                    },
+                    # remove a previous row
+                    # "1": {
+                    #   id:cm.linked_custom_metadatas.last.id,
+                    #   "custom_metadata_type_id": linked_cmt.id,
+                    #   "custom_metadata_attribute_id": linked_cma.id,
+                    #   "data": { "identifier": "grid.5379.8", "scheme": "GRID" }
+                    # },
+                    # add a new row
+                    "2": {
+                      id:cm.linked_custom_metadatas.last.id,
+                      "custom_metadata_type_id": linked_cmt.id,
+                      "custom_metadata_attribute_id": linked_cma.id,
+                      "data": { "identifier": "Q230899", "scheme": "Wikidata" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        end
+      end
+    end
+
+    assert new_study = assigns(:study)
+
+
+    # the value of study in database should not change
+    assert_equal 'my study', study.title
+    assert_equal 'HITS',cm.get_attribute_value('role_affiliation_name')
+    assert_equal '01f7bcy98', cm.linked_custom_metadatas.first.get_attribute_value('identifier')
+    assert_equal 'ROR', cm.linked_custom_metadatas.first.get_attribute_value('scheme')
+    assert_equal 'grid.424699.4', cm.linked_custom_metadatas.last.get_attribute_value('identifier')
+    assert_equal 'GRID', cm.linked_custom_metadatas.last.get_attribute_value('scheme')
+
+    assert_equal 2,cm.linked_custom_metadatas.size
+
+    # should show error message
+    assert_select 'div#error_explanation' do
+      assert_select 'ul > li', text: "Custom metadata linked custom metadatas identifier is required"
+    end
+
+    # the form should load updated title value
+    assert_select 'form.edit_study' do
+      assert_select 'input#study_title[value=?]', 'my new study title'
+      assert_select 'input#study_custom_metadata_attributes_data_role_affiliation_name[value=?]', 'University of Manchester'
+    end
+
+    # the form should load updated role_affiliation_identifiers value
+    assert_select 'div#role-0' do
+      assert_select 'input#study_custom_metadata_attributes_data_role_affiliation_identifiers_0_data_identifier[value=?]', ''
+      assert_select 'input#study_custom_metadata_attributes_data_role_affiliation_identifiers_0_data_scheme[value=?]', 'ROR'
+    end
+
+    # the form should not show removed value
+    assert_select 'input[value="grid.5379.8"]', count: 0
+    assert_select 'input[value="GRID"]', count: 0
+
+    # the form should show new value
+    assert_select "input[id^='study_custom_metadata_attributes_data_role_affiliation_identifiers_'][id$='_data_identifier'][value=?]",'Q230899'
+    assert_select "input[id^='study_custom_metadata_attributes_data_role_affiliation_identifiers_'][id$='_data_scheme'][value=?]",'Wikidata'
+
+
+  end
+
 
   test 'experimentalists only shown if set' do
     person = FactoryBot.create(:person)

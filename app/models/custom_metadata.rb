@@ -120,8 +120,7 @@ class CustomMetadata < ApplicationRecord
     if self.new_record? || cm_params[:id].blank?
       self.linked_custom_metadatas.build(custom_metadata_type: cma.linked_custom_metadata_type, data: cm_params[:data], custom_metadata_attribute_id: cm_params[:custom_metadata_attribute_id])
     else
-      linked_cm = CustomMetadata.find(cm_params[:id])
-      linked_cm.update(cm_params.permit!)
+      self.linked_custom_metadatas.select { |linked_cm| linked_cm.id == cm_params[:id].to_i }.first.update(cm_params.permit!)
     end
   end
 

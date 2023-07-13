@@ -9,6 +9,8 @@ class CustomMetadata < ApplicationRecord
   has_many :linked_custom_metadatas, through: :custom_metadata_resource_links, source: :resource, source_type: 'CustomMetadata'
   accepts_nested_attributes_for :linked_custom_metadatas, allow_destroy: true
 
+  has_one :linked_resource, class_name: 'CustomMetadataResourceLink', foreign_key: 'resource_id'
+
   validates_with CustomMetadataValidator
   validates_associated :linked_custom_metadatas
 
@@ -119,7 +121,6 @@ class CustomMetadata < ApplicationRecord
       self.linked_custom_metadatas.build(custom_metadata_type: cma.linked_custom_metadata_type, data: cm_params[:data], custom_metadata_attribute_id: cm_params[:custom_metadata_attribute_id])
     else
       linked_cm = CustomMetadata.find(cm_params[:id])
-      #todo find right linked_cm when multi linked cm
       linked_cm.update(cm_params.permit!)
     end
   end

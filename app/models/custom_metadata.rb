@@ -34,9 +34,8 @@ class CustomMetadata < ApplicationRecord
   end
 
   def update_ids_with_attribute_type_linked_custom_metadata_multi
-    linked_custom_metadatas.map(&:custom_metadata_attribute).select{|attr| attr.linked_custom_metadata_multi?}.uniq.each do |attr|
 
-
+    custom_metadata_attributes.select(&:linked_custom_metadata_multi?).each do |attr|
       ids = linked_custom_metadatas.select{|cm| cm.custom_metadata_attribute == attr }.pluck(:id)
       data.mass_assign(data.to_hash.update({attr.title => ids}), pre_process: false)
     end
@@ -98,9 +97,11 @@ class CustomMetadata < ApplicationRecord
   def set_linked_custom_metadatas(cma, cm_params)
 
     if cma.linked_custom_metadata_multi?
-      unless self.new_record?
+
+      # mark the element to delete
+      previous_linked_cm_ids = CustomMetadata.find(id).data[cma.title] unless id.nil?
+      unless self.new_record? || previous_linked_cm_ids.blank?
         current_linked_cm_ids = data[cma.title].values.pluck(:id).map(&:to_i)
-        previous_linked_cm_ids = CustomMetadata.find(id).data[cma.title]
         ids_to_delete = previous_linked_cm_ids - current_linked_cm_ids
         self.linked_custom_metadatas.load_target.select{|cm| ids_to_delete.include? cm.id}.each(&:mark_for_destruction)
       end
@@ -120,7 +121,7 @@ class CustomMetadata < ApplicationRecord
     if self.new_record? || cm_params[:id].blank?
       self.linked_custom_metadatas.build(custom_metadata_type: cma.linked_custom_metadata_type, data: cm_params[:data], custom_metadata_attribute_id: cm_params[:custom_metadata_attribute_id])
     else
-      self.linked_custom_metadatas.select { |linked_cm| linked_cm.id == cm_params[:id].to_i }.first.update(cm_params.permit!)
+      self.linked_custom_metadatas.select { |linked_cm| linked_cm.id == cm_params[:id].to_i }.first.update(cm_params.permit!) unless cm_params[:data].values.all?(&:empty?)
     end
   end
 

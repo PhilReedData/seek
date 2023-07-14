@@ -218,9 +218,9 @@ FactoryBot.define do
     association :linked_custom_metadata_type, factory: :role_name_custom_metadata_type
   end
 
-  factory(:child_name_linked_custom_metadata_attribute,class:CustomMetadataAttribute) do
+  factory(:child_name_linked_custom_metadata_attribute_multi_attribute,class:CustomMetadataAttribute) do
     title { 'child' }
-    association :sample_attribute_type, factory: :custom_metadata_sample_attribute_type
+    association :sample_attribute_type, factory: :custom_metadata_multi_sample_attribute_type
     association :linked_custom_metadata_type, factory: :role_name_custom_metadata_type
   end
 
@@ -230,7 +230,7 @@ FactoryBot.define do
     after(:build) do |a|
       a.custom_metadata_attributes << FactoryBot.create(:dad_linked_custom_metadata_attribute,required: true)
       a.custom_metadata_attributes << FactoryBot.create(:mom_linked_custom_metadata_attribute,required: true)
-      a.custom_metadata_attributes << FactoryBot.create(:child_name_linked_custom_metadata_attribute)
+      a.custom_metadata_attributes << FactoryBot.create(:child_name_linked_custom_metadata_attribute_multi_attribute)
     end
   end
 

@@ -1,8 +1,15 @@
 <% key = attribute.title  %>
 <% row ||= nil %>
-<% id = resource[:id]  %>
+
+<%# ss  %>
 <% index ||= 'row-template' %>
+<% id = (index == 0 ? nil : resource[:id])  %>
 <% allow_row_removal = (index == 0 ? false : true ) %>
+<%   allow_row_removal = if index == 0
+                           attribute.linked_custom_metadata_type.custom_metadata_attributes.none?(&:required?)
+                         else
+                           true
+                         end %>
 <% field_name_prefix = "#{element_name}[#{index}]" %>
 
 <div id="role-<%= index-%>" class="<%= key.singularize %> single-role multi_linked_custom_metdata" data-index="<%= index-%>">

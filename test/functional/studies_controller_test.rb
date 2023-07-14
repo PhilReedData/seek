@@ -965,25 +965,18 @@ class StudiesControllerTest < ActionController::TestCase
             "dad": {
               custom_metadata_type_id:linked_cmts[0].linked_custom_metadata_type.id,
               custom_metadata_attribute_id:linked_cmts[0].id,
-              data:{
-                "first_name":"john",
-                "last_name": "liddell"
-              }
+              data:{ "first_name":"john", "last_name": "liddell"}
             },
             "mom": {
               custom_metadata_type_id:linked_cmts[1].linked_custom_metadata_type.id,
               custom_metadata_attribute_id:linked_cmts[1].id,
-              data:{
-                "first_name":"lily",
-                "last_name": "liddell"
-              }
+              data:{ "first_name":"lily", "last_name": "liddell"}
             },
             "child": {
-              custom_metadata_type_id:linked_cmts[2].linked_custom_metadata_type.id,
-              custom_metadata_attribute_id:linked_cmts[2].id,
-              data:{
-                "first_name":"alice",
-                "last_name": "liddell"
+              "0":{
+                custom_metadata_type_id:linked_cmts[2].linked_custom_metadata_type.id,
+                custom_metadata_attribute_id:linked_cmts[2].id,
+                data:{ "first_name":"alice", "last_name": "liddell"}
               }
             }
           }
@@ -1009,7 +1002,7 @@ class StudiesControllerTest < ActionController::TestCase
 
     # test update
     assert_no_difference('Study.count') do
-      assert_no_difference('CustomMetadata.count') do
+      assert_difference('CustomMetadata.count') do
         put :update, params: { id: study.id, study: { title: "Alice Through the Looking Glass",
                                                       custom_metadata_attributes: {
                                                         custom_metadata_type_id: cmt.id, id:cm.id, data: {
@@ -1023,12 +1016,22 @@ class StudiesControllerTest < ActionController::TestCase
                                                             }
                                                           },
                                                           "child": {
+                                                            "0":{
                                                             id:cm_ids[2],
                                                             custom_metadata_type_id:linked_cmts[2].linked_custom_metadata_type.id,
                                                             custom_metadata_attribute_id:linked_cmts[2].id,
                                                             data:{
                                                               "first_name":"rabbit",
                                                               "last_name": "wonderland"
+                                                            }
+                                                            },
+                                                            "1":{
+                                                              custom_metadata_type_id:linked_cmts[2].linked_custom_metadata_type.id,
+                                                              custom_metadata_attribute_id:linked_cmts[2].id,
+                                                              data:{
+                                                                "first_name":"mad",
+                                                                "last_name": "hatter"
+                                                              }
                                                             }
                                                           }
                                                         }
@@ -1046,9 +1049,54 @@ class StudiesControllerTest < ActionController::TestCase
     assert_equal "liddell",cm.linked_custom_metadatas[1].get_attribute_value('last_name')
     assert_equal "rabbit",cm.linked_custom_metadatas[2].get_attribute_value('first_name')
     assert_equal "wonderland",cm.linked_custom_metadatas[2].get_attribute_value('last_name')
+    assert_equal "mad",cm.linked_custom_metadatas[3].get_attribute_value('first_name')
+    assert_equal "hatter",cm.linked_custom_metadatas[3].get_attribute_value('last_name')
 
+  end
 
+  test 'should create and update study with multiple linked custom metadata types without entering non-required values' do
+    cmt = FactoryBot.create(:family_custom_metadata_type)
+    login_as(FactoryBot.create(:person))
+    linked_cmts = cmt.attributes_with_linked_custom_metadata_type
+    assert_difference('Study.count') do
+      assert_difference('CustomMetadata.count',3) do
+        investigation = FactoryBot.create(:investigation,projects:User.current_user.person.projects,contributor:User.current_user.person)
+        study_attributes = { title: 'Family', investigation_id: investigation.id }
+        cm_attributes = { custom_metadata_attributes: {
+          custom_metadata_type_id: cmt.id, data: {
+            "dad": {
+              custom_metadata_type_id:linked_cmts[0].linked_custom_metadata_type.id,
+              custom_metadata_attribute_id:linked_cmts[0].id,
+              data:{ "first_name":"john", "last_name": "liddell"}
+            },
+            "mom": {
+              custom_metadata_type_id:linked_cmts[1].linked_custom_metadata_type.id,
+              custom_metadata_attribute_id:linked_cmts[1].id,
+              data:{ "first_name":"lily", "last_name": "liddell"}
+            },
+            "child": {
+              # the not reqiured attributes can be removed
+              "row-template":{
+                custom_metadata_type_id:linked_cmts[2].linked_custom_metadata_type.id,
+                custom_metadata_attribute_id:linked_cmts[2].id,
+                data:{ "first_name":"", "last_name": "liddell"}
+              }
+            }
+          }
+        }
+        }
+        post :create, params: { study: study_attributes.merge(cm_attributes), sharing: valid_sharing }
+      end
+    end
 
+    assert study = assigns(:study)
+    assert cm = study.custom_metadata
+    assert_equal cmt, cm.custom_metadata_type
+    assert_equal "john",cm.linked_custom_metadatas[0].get_attribute_value('first_name')
+    assert_equal "liddell",cm.linked_custom_metadatas[0].get_attribute_value('last_name')
+    assert_equal "lily",cm.linked_custom_metadatas[1].get_attribute_value('first_name')
+    assert_equal "liddell",cm.linked_custom_metadatas[1].get_attribute_value('last_name')
+    assert_empty cm.data["child"]
   end
 
   test 'should create and update study with multiple linked custom metadata types' do

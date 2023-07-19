@@ -1716,4 +1716,54 @@ class WorkflowsControllerTest < ActionController::TestCase
     log = workflow.activity_logs.last
     assert_equal 'download', log.action
   end
+
+  test 'lists doi in index in table view' do
+    Workflow.delete_all
+
+    no_doi_workflow = FactoryBot.create(:public_workflow)
+    workflow = FactoryBot.create(:public_workflow)
+    v = workflow.latest_version
+    disable_authorization_checks do
+      assert v.update(doi: '10.81082/dev-workflowhub.workflow.136.1')
+    end
+
+    get :index, params: { view: 'table', table_cols: 'creators,projects,version,license,doi' }
+    assert_response :success
+    assert_select '.list_items_container tbody tr', count: 2
+    assert_select '.list_items_container tbody tr' do
+      assert_select 'td a[href=?]', 'https://doi.org/10.81082/dev-workflowhub.workflow.136.1'
+    end
+
+    # Reset the view parameter
+    session.delete(:view)
+  end
+
+  test 'can get citation for workflow with CFF' do
+    workflow = FactoryBot.create(:local_git_workflow, policy: FactoryBot.create(:public_policy))
+
+    get :show, params: { id: workflow }
+    assert_response :success
+    assert_select '#citation', text: /van der Real Person, O\. T\./, count: 0
+
+    gv = workflow.latest_git_version
+    disable_authorization_checks do
+      gv.add_file('CITATION.cff', open_fixture_file('CITATION.cff'))
+      disable_authorization_checks { gv.save! }
+    end
+
+    get :show, params: { id: workflow }
+    assert_response :success
+    assert_select '#citation', text: /van der Real Person, O\. T\./, count: 1
+  end
+
+  test 'display test status with link to LifeMonitor on show page' do
+    wf = FactoryBot.create(:public_workflow)
+    disable_authorization_checks do
+      wf.update_test_status(:all_passing, wf.version)
+    end
+
+    get :show, params: { id: wf }
+
+    assert_select 'a.lifemonitor-status[href=?]', "https://localhost:8443/workflow;uuid=#{wf.uuid}"
+  end
 end

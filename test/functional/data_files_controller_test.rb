@@ -465,6 +465,32 @@ class DataFilesControllerTest < ActionController::TestCase
     assert_equal 'text/html', assigns(:data_file).content_blob.content_type
   end
 
+  test 'should add link to a webpage with redirect to 403' do
+    stub_request(:head, 'http://unauth.com/some/path').to_return(status: 302, headers: { 'Location' => 'https://unauth.com/some/path' })
+    stub_request(:head, 'https://unauth.com/some/path').to_return(status: 403, headers: { 'Content-Type' => 'text/html' })
+    stub_request(:get, 'http://unauth.com/some/path').to_return(status: 302, headers: { 'Location' => 'https://unauth.com/some/path' })
+    stub_request(:get, 'https://unauth.com/some/path').to_return(status: 403, headers: { 'Content-Type' => 'text/html' })
+
+    data_file = { title: 'Test HTTP', project_ids: [projects(:sysmo_project).id] }
+    blob = { data_url: 'http://unauth.com/some/path' }
+
+    assert_difference('DataFile.count') do
+      assert_difference('ContentBlob.count') do
+        post :create, params: { data_file: data_file, content_blobs: [blob], policy_attributes: valid_sharing }
+      end
+    end
+
+    assert_redirected_to data_file_path(assigns(:data_file))
+    assert_equal users(:datafile_owner).person, assigns(:data_file).contributor
+    refute assigns(:data_file).content_blob.url.blank?
+    assert assigns(:data_file).content_blob.data_io_object.nil?
+    refute assigns(:data_file).content_blob.file_exists?
+    assert_equal 'path', assigns(:data_file).content_blob.original_filename
+    assert assigns(:data_file).content_blob.is_webpage?
+    assert_equal 'http://unauth.com/some/path', assigns(:data_file).content_blob.url
+    assert_equal 'text/html', assigns(:data_file).content_blob.content_type
+  end
+
   test 'should show webpage as a link' do
     mock_remote_file "#{Rails.root}/test/fixtures/files/html_file.html", 'http://webpage.com', 'Content-Type' => 'text/html'
 
@@ -3000,6 +3026,44 @@ class DataFilesControllerTest < ActionController::TestCase
 
   end
 
+  test 'create metadata with gatekeeper - cannot publish' do
+    gatekeeper = FactoryBot.create(:asset_gatekeeper)
+    person = FactoryBot.create(:person)
+    person.person.add_to_project_and_institution(gatekeeper.projects.first, FactoryBot.create(:institution))
+    login_as(person)
+    blob = FactoryBot.create(:content_blob)
+    session[:uploaded_content_blob_id] = blob.id
+    post :create_metadata, params: { data_file: { title: 'Gatekept File', project_ids: gatekeeper.projects.collect(&:id) },
+                                     content_blob_id: blob.id.to_s,
+                                     policy_attributes: { access_type: Policy::ACCESSIBLE },
+                                     assay_ids: [] }
+    assert (df = assigns(:data_file))
+    assert_redirected_to df
+    policy = df.policy
+    assert_equal Policy::NO_ACCESS, policy.access_type
+    assert_enqueued_emails 1
+    assert_equal ResourcePublishLog::WAITING_FOR_APPROVAL, df.last_publishing_log.publish_state
+  end
+
+  test 'create metadata with gatekeeper - can make visible' do
+    gatekeeper = FactoryBot.create(:asset_gatekeeper)
+    person = FactoryBot.create(:person)
+    person.person.add_to_project_and_institution(gatekeeper.projects.first, FactoryBot.create(:institution))
+    login_as(person)
+    blob = FactoryBot.create(:content_blob)
+    session[:uploaded_content_blob_id] = blob.id
+    post :create_metadata, params: { data_file: { title: 'Gatekept File', project_ids: gatekeeper.projects.collect(&:id) },
+                                     content_blob_id: blob.id.to_s,
+                                     policy_attributes: { access_type: Policy::VISIBLE },
+                                     assay_ids: [] }
+    assert (df = assigns(:data_file))
+    assert_redirected_to df
+    policy = df.policy
+    assert_equal Policy::VISIBLE, policy.access_type
+    assert_enqueued_emails 0
+    assert_nil df.last_publishing_log
+  end
+
   test 'create metadata with associated assay' do
     person = FactoryBot.create(:person)
     login_as(person)
@@ -3296,23 +3360,27 @@ class DataFilesControllerTest < ActionController::TestCase
         end
       end
     end
-
-    assert (df = assigns(:data_file))
+    df = assigns(:data_file)
+    assert df
     assert_equal Policy::PRIVATE, df.policy.access_type
     assert_equal 2, df.policy.permissions.count
-    assert_equal manager, df.policy.permissions[0].contributor
-    assert_equal Policy::MANAGING, df.policy.permissions[0].access_type
-    assert_equal other_project, df.policy.permissions[1].contributor
-    assert_equal Policy::VISIBLE, df.policy.permissions[1].access_type
+    manager_perm = df.policy.permissions.detect { |p| p.contributor == manager }
+    assert manager_perm
+    assert_equal Policy::MANAGING, manager_perm.access_type
+    other_project_perm = df.policy.permissions.detect { |p| p.contributor == other_project }
+    assert other_project_perm
+    assert_equal Policy::VISIBLE, other_project_perm.access_type
 
     assay = df.assays.first
     refute_equal df.policy.id, assay.policy.id
     assert_equal Policy::PRIVATE, assay.policy.access_type
     assert_equal 2, assay.policy.permissions.count
-    assert_equal manager, assay.policy.permissions[0].contributor
-    assert_equal Policy::MANAGING, assay.policy.permissions[0].access_type
-    assert_equal other_project, assay.policy.permissions[1].contributor
-    assert_equal Policy::VISIBLE, assay.policy.permissions[1].access_type
+    manager_perm = assay.policy.permissions.detect { |p| p.contributor == manager }
+    assert manager_perm
+    assert_equal Policy::MANAGING, manager_perm.access_type
+    other_project_perm = assay.policy.permissions.detect { |p| p.contributor == other_project }
+    assert other_project_perm
+    assert_equal Policy::VISIBLE, other_project_perm.access_type
   end
 
   test 'create metadata with new assay fails if study not editable' do
@@ -3707,6 +3775,10 @@ class DataFilesControllerTest < ActionController::TestCase
 
   test 'manage menu item appears according to permission' do
     check_manage_edit_menu_for_type('data_file')
+  end
+
+  test 'publish menu items appears according to status and permission' do
+    check_publish_menu_for_type('data_file')
   end
 
   test 'can access manage page with manage rights' do

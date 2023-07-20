@@ -262,7 +262,7 @@ FactoryBot.define do
 
   factory(:role_affiliation_identifiers_custom_metadata_type,class:CustomMetadataType) do
     title { 'role_affiliation_identifiers' }
-    supported_type { 'CustomMetadata' }
+    supported_type { 'Study' }
     after(:build) do |a|
       a.custom_metadata_attributes << FactoryBot.create(:identifier_custom_metadata_attribute, required: true)
       a.custom_metadata_attributes << FactoryBot.create(:scheme_custom_metadata_attribute, required: true)

@@ -41,9 +41,9 @@ module SamplesHelper
     controlled_vocab_form_field(sample_controlled_vocab, element_name, values, nil)
   end
 
-  def linked_custom_metadata_multi_form_field(resource, value, attribute, element_name, element_class)
+  def linked_custom_metadata_multi_form_field(attribute, resource, element_name, element_class)
     render :partial => 'custom_metadata/fancy_linked_custom_metadata_multi_attribute_fields',
-           :locals=> {:resource=>resource, :attribute => attribute,:element_name => element_name,:element_class => element_class, :value => value,:collapsed=>false}
+           :locals=> {:resource=>resource, :attribute => attribute,:element_name => element_name,:element_class => element_class, :collapsed=>false}
   end
 
   def linked_custom_metadata_form_field(attribute,resource,element_name, element_class,depth)
@@ -331,7 +331,7 @@ module SamplesHelper
     when Seek::Samples::BaseType::LINKED_CUSTOM_METADATA
       linked_custom_metadata_form_field attribute, resource, element_name, element_class,depth
     when Seek::Samples::BaseType::LINKED_CUSTOM_METADATA_MULTI
-      linked_custom_metadata_multi_form_field resource, value, attribute, element_name, element_class
+      linked_custom_metadata_multi_form_field attribute, resource, element_name, element_class
     else
       text_field_tag element_name, value, class: "form-control #{element_class}", placeholder: placeholder
     end

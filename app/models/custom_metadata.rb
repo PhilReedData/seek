@@ -83,12 +83,11 @@ class CustomMetadata < ApplicationRecord
       cma_params = parameters[:data][cma.title.to_sym]
       set_linked_custom_metadatas(cma, cma_params) unless cma_params.nil?
 
-      #todo: check multi level attr ???? don't understand what is this doing
       cma_linked_cmt =  cma.linked_custom_metadata_type.attributes_with_linked_custom_metadata_type
 
       unless cma_linked_cmt.blank?
         cm = self.linked_custom_metadatas.select{|cm| cm.custom_metadata_type.id == cma[:linked_custom_metadata_type_id]}.first
-        cm.update_linked_custom_metadata(cma_params)
+        cm.update_linked_custom_metadata(cma_params) unless cma_params.nil?
       end
 
     end
@@ -101,7 +100,8 @@ class CustomMetadata < ApplicationRecord
       # mark the element to delete
       previous_linked_cm_ids = CustomMetadata.find(id).data[cma.title] unless id.nil?
       unless self.new_record? || previous_linked_cm_ids.blank?
-        current_linked_cm_ids = data[cma.title].values.pluck(:id).map(&:to_i)
+        current_linked_cm_ids = cm_params.values.pluck(:id).map(&:to_i)
+        # current_linked_cm_ids = data[cma.title].values.pluck(:id).map(&:to_i)
         ids_to_delete = previous_linked_cm_ids - current_linked_cm_ids
         self.linked_custom_metadatas.load_target.select{|cm| ids_to_delete.include? cm.id}.each(&:mark_for_destruction)
       end

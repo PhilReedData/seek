@@ -1,22 +1,38 @@
 <% key = attribute.title %>
 
-<%= folding_panel(attribute.label, collapsed, :body_options => { :id => key }) do %>
+<%
+  if params.keys.include? controller_name.singularize
+    # if form is reloaded with the previous data on save/update failure.(e.g. missing required fields)
+    #  parse the right custom metadata value from params with (element_name.scan(/\w+/).inject(params) { |hash, key| hash[key.to_sym] }.except("row-template").permit!).to_hash
+
+    # eg. if element_name ="study[custom_metadata_attributes][data][a_3]][data][a_3_3]][data][a_3_3_3]][data][a_3_3_3_3]][data][a_3_3_3_3_3]][data][a_3_3_3_3_3_3]"
+    #     value = {"0"=>{"id"=>"", "custom_metadata_type_id"=>"10", "custom_metadata_attribute_id"=>"45", "data"=>{"a_3_3_3_3_3_3_1"=>"33333331.a", "a_3_3_3_3_3_3_2"=>"33333332.a"}}, "1"=>{"id"=>"", "custom_metadata_type_id"=>"10", "custom_metadata_attribute_id"=>"45", "data"=>{"a_3_3_3_3_3_3_1"=>"33333331.b", "a_3_3_3_3_3_3_2"=>"33333332.b"}}}
+
+    value = (element_name.scan(/\w+/).inject(params) { |hash, key| hash[key.to_sym] }.except("row-template").permit!).to_hash
+  else
+    # if loading a new page : params=>#<ActionController::Parameters {"id"=>"#id", "controller"=>"custom_metadata_types", "action"=>"form_fields"} permitted: false>
+    # if loading an edit page: params => #<ActionController::Parameters {"controller"=>"studies", "action"=>"edit", "id"=>"#id"} permitted: false>
+    value = resource.data[attribute.title]
+  end
+
+%>
+
   <div id="<%= key %>">
-    <div class="table" id="<%= key.singularize %>-table">
+    <div class="table linked_custom_metdata_odd" id="<%= key.singularize %>-table">
       <% if value.blank? %>
-        <!-- loading page when new a study, the value is blank -->
+        <!-- if loading a new page, the value is blank -->
 
         <%= render :partial => "custom_metadata/single_row",
                    :locals => { :index => 0, :resource => resource, :attribute => attribute, :element_name => element_name, :element_class => element_class } %>
       <% else %>
-        <!-- loading page when edting a study, the value is an array of custom metadata ids -->
+        <!-- if loading an edit page, the value is an array of custom metadata ids -->
         <% if value.is_a?(Array) %>
           <% value.each_with_index do |id, index| %>
             <% resource = CustomMetadata.find(id) %>
             <%= render partial: 'custom_metadata/single_row', locals: { key: key, index: index, resource: resource,
                                                                         attribute: attribute, element_name: element_name, element_class: element_class } %>
           <% end %>
-          <!-- when failing to save, reload the page, the value is a hash of custom metadatas-->
+          <!-- if form is reloaded with the previously entered data on save/update failure.(e.g. missing required fields) -->
         <% elsif value.is_a?(Hash) %>
           <% value.each_with_index do |(index, cm), _index| %>
             <% resource =  CustomMetadata.new(cm) %>
@@ -37,7 +53,7 @@
       <%= render :partial => 'custom_metadata/single_row', :locals => { :resource => CustomMetadata.new(custom_metadata_type: resource.custom_metadata_type, custom_metadata_attribute: resource.custom_metadata_attribute), :attribute => attribute, :element_name => element_name, :element_class => element_class } %>
     </div>
   </div>
-<% end %>
+
 <script>
     $j(document).ready(function () {
 

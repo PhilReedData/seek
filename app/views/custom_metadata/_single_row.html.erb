@@ -1,10 +1,8 @@
 <% key = attribute.title  %>
 <% row ||= nil %>
-
-<%# ss  %>
 <% index ||= 'row-template' %>
 <% id = (index == 0 ? nil : resource[:id])  %>
-<% allow_row_removal = (index == 0 ? false : true ) %>
+
 <%   allow_row_removal = if index == 0
                            attribute.linked_custom_metadata_type.custom_metadata_attributes.none?(&:required?)
                          else

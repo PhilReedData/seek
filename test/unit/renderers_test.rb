@@ -5,12 +5,33 @@ class RenderersTest < ActiveSupport::TestCase
   include Rails::Dom::Testing::Assertions
 
   setup do
-    @asset = Factory(:sop)
-    @git = Factory(:git_version)
+    @asset = FactoryBot.create(:sop)
+    @git = FactoryBot.create(:git_version)
   end
 
   test 'factory' do
-    cb = Factory(:content_blob)
+    cb = FactoryBot.create(:content_blob)
+    cb.url = 'http://bbc.co.uk'
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::BlankRenderer, render.class
+
+    cb = FactoryBot.create(:content_blob)
+    cb.url = 'http://www.slideshare.net/mygrid/if-we-build-it-will-they-come-13652794'
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::SlideshareRenderer, render.class
+
+    factory = Seek::Renderers::RendererFactory.instance
+    assert_equal Seek::Renderers::PdfRenderer, factory.renderer(FactoryBot.create(:pdf_content_blob)).class
+    assert_equal Seek::Renderers::PdfRenderer, factory.renderer(FactoryBot.create(:docx_content_blob)).class
+    assert_equal Seek::Renderers::MarkdownRenderer, factory.renderer(FactoryBot.create(:markdown_content_blob)).class
+    assert_equal Seek::Renderers::NotebookRenderer, factory.renderer(FactoryBot.create(:jupyter_notebook_content_blob)).class
+    assert_equal Seek::Renderers::TextRenderer, factory.renderer(FactoryBot.create(:txt_content_blob)).class
+    assert_equal Seek::Renderers::ImageRenderer, factory.renderer(FactoryBot.create(:image_content_blob)).class
+    assert_equal Seek::Renderers::BlankRenderer, factory.renderer(FactoryBot.create(:binary_content_blob)).class
+  end
+
+  test 'factory cache' do
+    cb = FactoryBot.create(:content_blob)
     cb.url = 'http://bbc.co.uk'
     render = Seek::Renderers::RendererFactory.instance.renderer(cb)
     assert_equal Seek::Renderers::BlankRenderer, render.class
@@ -18,15 +39,36 @@ class RenderersTest < ActiveSupport::TestCase
     cb.url = 'http://www.slideshare.net/mygrid/if-we-build-it-will-they-come-13652794'
     render = Seek::Renderers::RendererFactory.instance.renderer(cb)
     assert_equal Seek::Renderers::SlideshareRenderer, render.class
+   
+    cb.url = 'http://bbc.co.uk'
+    cb.save!
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::BlankRenderer, render.class
+   
+    cb.url = 'http://www.slideshare.net/mygrid/if-we-build-it-will-they-come-13652794'
+    cb.save!
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::SlideshareRenderer, render.class
+    
+    # Tests with content blob having no content (cache key is different currently)
+    cb = FactoryBot.create(:url_content_blob)
+    cb.url = 'http://bbc.co.uk'
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::BlankRenderer, render.class
 
-    factory = Seek::Renderers::RendererFactory.instance
-    assert_equal Seek::Renderers::PdfRenderer, factory.renderer(Factory(:pdf_content_blob)).class
-    assert_equal Seek::Renderers::PdfRenderer, factory.renderer(Factory(:docx_content_blob)).class
-    assert_equal Seek::Renderers::MarkdownRenderer, factory.renderer(Factory(:markdown_content_blob)).class
-    assert_equal Seek::Renderers::NotebookRenderer, factory.renderer(Factory(:jupyter_notebook_content_blob)).class
-    assert_equal Seek::Renderers::TextRenderer, factory.renderer(Factory(:txt_content_blob)).class
-    assert_equal Seek::Renderers::ImageRenderer, factory.renderer(Factory(:image_content_blob)).class
-    assert_equal Seek::Renderers::BlankRenderer, factory.renderer(Factory(:binary_content_blob)).class
+    cb.url = 'http://www.slideshare.net/mygrid/if-we-build-it-will-they-come-13652794'
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::SlideshareRenderer, render.class
+   
+    cb.url = 'http://bbc.co.uk'
+    cb.save!
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::BlankRenderer, render.class
+   
+    cb.url = 'http://www.slideshare.net/mygrid/if-we-build-it-will-they-come-13652794'
+    cb.save!
+    render = Seek::Renderers::RendererFactory.instance.renderer(cb)
+    assert_equal Seek::Renderers::SlideshareRenderer, render.class
   end
 
   test 'blank renderer' do
@@ -34,7 +76,7 @@ class RenderersTest < ActiveSupport::TestCase
   end
 
   test 'slideshare_renderer' do
-    cb = Factory(:content_blob)
+    cb = FactoryBot.create(:content_blob)
 
     cb.url = 'http://fish.com'
     renderer = Seek::Renderers::SlideshareRenderer.new(cb)
@@ -91,7 +133,7 @@ class RenderersTest < ActiveSupport::TestCase
   end
 
   test 'youtube renderer' do
-    cb = Factory(:content_blob)
+    cb = FactoryBot.create(:content_blob)
     renderer = Seek::Renderers::YoutubeRenderer.new(cb)
 
     valid_youtube_urls = %w(
@@ -160,8 +202,8 @@ class RenderersTest < ActiveSupport::TestCase
     url_sets.each do |code, urls|
       urls.each do |url|
         stub_request(:head, url).to_timeout
-        cb = Factory(:content_blob, url: url)
-        assert_equal "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/#{code}\" frameborder=\"0\" allowfullscreen></iframe>",
+        cb = FactoryBot.create(:content_blob, url: url)
+        assert_equal "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube-nocookie.com/embed/#{code}\" frameborder=\"0\" allowfullscreen></iframe>",
                      Seek::Renderers::YoutubeRenderer.new(cb).render
       end
     end
@@ -182,7 +224,7 @@ class RenderersTest < ActiveSupport::TestCase
   end
 
   test 'pdf renderer' do
-    blob = Factory(:pdf_content_blob, asset: @asset)
+    blob = FactoryBot.create(:pdf_content_blob, asset: @asset)
     renderer = Seek::Renderers::PdfRenderer.new(blob)
     assert renderer.can_render?
     @html = Nokogiri::HTML.parse(renderer.render)
@@ -204,26 +246,26 @@ class RenderersTest < ActiveSupport::TestCase
     assert_select '#outerContainer'
 
     with_config_value(:pdf_conversion_enabled, true) do
-      blob = Factory(:docx_content_blob, asset: @asset)
+      blob = FactoryBot.create(:docx_content_blob, asset: @asset)
       renderer = Seek::Renderers::PdfRenderer.new(blob)
       assert renderer.can_render?
     end
 
     with_config_value(:pdf_conversion_enabled, false) do
-      blob = Factory(:docx_content_blob, asset: @asset)
+      blob = FactoryBot.create(:docx_content_blob, asset: @asset)
       renderer = Seek::Renderers::PdfRenderer.new(blob)
       refute renderer.can_render?
     end
 
     with_config_value(:pdf_conversion_enabled, true) do
-      blob = Factory(:image_content_blob, asset: @asset)
+      blob = FactoryBot.create(:image_content_blob, asset: @asset)
       renderer = Seek::Renderers::PdfRenderer.new(blob)
       refute renderer.can_render?
     end
   end
 
   test 'markdown renderer' do
-    blob = Factory(:markdown_content_blob, asset: @asset)
+    blob = FactoryBot.create(:markdown_content_blob, asset: @asset)
     renderer = Seek::Renderers::MarkdownRenderer.new(blob)
     assert renderer.can_render?
     @html = Nokogiri::HTML.parse(renderer.render)
@@ -246,13 +288,13 @@ class RenderersTest < ActiveSupport::TestCase
     assert_select '#navbar', count: 0
     assert_select '.markdown-body h1', text: 'FAIRDOM-SEEK'
 
-    blob = Factory(:txt_content_blob, asset: @asset)
+    blob = FactoryBot.create(:txt_content_blob, asset: @asset)
     renderer = Seek::Renderers::MarkdownRenderer.new(blob)
     refute renderer.can_render?
   end
 
   test 'jupyter notebook renderer' do
-    blob = Factory(:jupyter_notebook_content_blob, asset: @asset)
+    blob = FactoryBot.create(:jupyter_notebook_content_blob, asset: @asset)
     renderer = Seek::Renderers::NotebookRenderer.new(blob)
     assert renderer.can_render?
     @html = Nokogiri::HTML.parse(renderer.render)
@@ -277,13 +319,13 @@ class RenderersTest < ActiveSupport::TestCase
     assert_select 'body.jp-Notebook'
     assert_select 'div.jp-MarkdownOutput p', text: 'Import the libraries so that they can be used within the notebook'
 
-    blob = Factory(:txt_content_blob, asset: @asset)
+    blob = FactoryBot.create(:txt_content_blob, asset: @asset)
     renderer = Seek::Renderers::NotebookRenderer.new(blob)
     refute renderer.can_render?
   end
 
   test 'text renderer' do
-    blob = Factory(:txt_content_blob, asset: @asset)
+    blob = FactoryBot.create(:txt_content_blob, asset: @asset)
     renderer = Seek::Renderers::TextRenderer.new(blob)
     assert renderer.can_render?
     @html = Nokogiri::HTML.parse(renderer.render)
@@ -299,21 +341,22 @@ class RenderersTest < ActiveSupport::TestCase
     @html = Nokogiri::HTML.parse(renderer.render)
     assert_select 'pre', text: /This is a txt format/
 
+    git_blob.rewind
     assert_equal "This is a txt format\n", renderer.render_standalone
 
-    blob = Factory(:csv_content_blob, asset: @asset)
+    blob = FactoryBot.create(:csv_content_blob, asset: @asset)
     renderer = Seek::Renderers::TextRenderer.new(blob)
     assert renderer.can_render?
     @html = Nokogiri::HTML.parse(renderer.render)
     assert_select 'pre'
 
-    blob = Factory(:image_content_blob, asset: @asset)
+    blob = FactoryBot.create(:image_content_blob, asset: @asset)
     renderer = Seek::Renderers::TextRenderer.new(blob)
     refute renderer.can_render?
   end
 
   test 'image renderer' do
-    blob = Factory(:image_content_blob, asset: @asset)
+    blob = FactoryBot.create(:image_content_blob, asset: @asset)
     renderer = Seek::Renderers::ImageRenderer.new(blob)
     assert renderer.can_render?
     @html = Nokogiri::HTML.parse(renderer.render)
@@ -335,7 +378,7 @@ class RenderersTest < ActiveSupport::TestCase
     assert_select 'iframe', count: 0
     assert_select '#navbar', count: 0
     assert_select 'img.git-image-preview'
-    blob = Factory(:txt_content_blob, asset: @asset)
+    blob = FactoryBot.create(:txt_content_blob, asset: @asset)
     renderer = Seek::Renderers::ImageRenderer.new(blob)
     refute renderer.can_render?
   end

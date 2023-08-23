@@ -129,6 +129,12 @@ class Person < ApplicationRecord
     self
   end
 
+  # method called from the related_items.rb
+  # Gets all the programmes related to this person object.
+  def related_programmes
+    programmes | programmes_for_role(:programme_administrator)
+  end
+
   # not registered profiles that match this email
   def self.not_registered_with_matching_email(email)
     not_registered.where('UPPER(email) = ?', email.upcase)
@@ -274,9 +280,10 @@ class Person < ApplicationRecord
 
   # all items, assets, ISA, samples and events that are linked to this person as a contributor
   def contributed_items
-    [Assay, Study, Investigation, DataFile, Document, Sop, Presentation, Model, Sample, Strain, Publication, Event, SampleType].collect do |type|
-      type.where(contributor_id:id)
-    end.flatten.uniq.compact
+    RELATED_RESOURCE_TYPES.flat_map do |type|
+      plural = type.tableize
+      send("contributed_#{plural}")
+    end
   end
 
   def me?

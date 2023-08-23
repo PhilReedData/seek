@@ -1,5 +1,4 @@
 class SampleAttributeType < ApplicationRecord
-  # attr_accessible :base_type, :regexp, :title, :placeholder, :description, :resolution
 
   validates :title, :base_type, :regexp, presence: true
   validate :validate_allowed_type, :validate_regular_expression, :validate_resolution
@@ -74,11 +73,19 @@ class SampleAttributeType < ApplicationRecord
   end
 
   def controlled_vocab?
-    base_type == Seek::Samples::BaseType::CV
+    [Seek::Samples::BaseType::CV, Seek::Samples::BaseType::CV_LIST].include?(base_type)
+  end
+
+  def seek_cv_list?
+    base_type == Seek::Samples::BaseType::CV_LIST
   end
 
   def seek_resource?
     base_type_handler.is_a?(Seek::Samples::AttributeTypeHandlers::SeekResourceAttributeTypeHandler)
+  end
+
+  def linked_custom_metadata?
+    base_type == Seek::Samples::BaseType::LINKED_CUSTOM_METADATA
   end
 
   def seek_sample?

@@ -38,8 +38,15 @@ module AssetsHelper
   # will render a view of the asset, if available. For example, a slideshare based asset could give a embedded slideshare view
   def rendered_asset_view(asset)
     return '' unless asset.can_download?
-    content = Rails.cache.fetch("#{asset.cache_key}/#{asset.content_blob.cache_key}") do
-      Seek::Renderers::RendererFactory.instance.renderer(asset.content_blob).render
+
+    our_renderer = Seek::Renderers::RendererFactory.instance.renderer(asset.content_blob)
+    if our_renderer.external_embed? && !cookie_consent.allow_embedding?
+      # If embedding external content is not allowed, then server a link instead
+      content = "This embedded content is blocked due to your cookie settings"
+    else
+      content = Rails.cache.fetch("#{asset.cache_key}/#{asset.content_blob.cache_key}") do
+        our_renderer.render
+      end
     end
     if content.blank?
       ''
@@ -117,10 +124,8 @@ module AssetsHelper
       resource_type = resource_or_text.class.name
       text = if resource_or_text.is_a?(Assay)
                resource_or_text.is_modelling? ? t('assays.modelling_analysis') : t('assays.assay')
-             elsif !(translated = translate_resource_type(resource_type)).include?('translation missing')
-               translated
              else
-               resource_type.underscore.humanize
+               translate_resource_type(resource_type) || resource_type.underscore.humanize
              end
     end
     text

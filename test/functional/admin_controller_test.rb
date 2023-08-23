@@ -6,7 +6,7 @@ class AdminControllerTest < ActionController::TestCase
   include AuthenticatedTestHelper
 
   def setup
-    login_as(Factory(:admin))
+    login_as(FactoryBot.create(:admin))
   end
 
   test 'should show rebrand' do
@@ -15,7 +15,7 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'non admin cannot restart the server' do
-    login_as(Factory(:user))
+    login_as(FactoryBot.create(:user))
     post :restart_server
     refute_nil flash[:error]
   end
@@ -31,7 +31,7 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'non admin cannot restart the delayed job' do
-    login_as(Factory(:user))
+    login_as(FactoryBot.create(:user))
     post :restart_delayed_job
     refute_nil flash[:error]
   end
@@ -42,7 +42,7 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'none admin not get registration form' do
-    login_as Factory(:user)
+    login_as FactoryBot.create(:user)
     get :registration_form
     assert !User.current_user.person.is_admin?
     assert_redirected_to root_path
@@ -71,7 +71,7 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'invisible to non admin' do
-    login_as(Factory(:user))
+    login_as(FactoryBot.create(:user))
     get :index
     assert_response :redirect
     refute_nil flash[:error]
@@ -167,15 +167,14 @@ class AdminControllerTest < ActionController::TestCase
     aaron = people(:aaron_person)
 
     assert quentin.is_admin?
-    assert !aaron.is_admin?
+    refute aaron.is_admin?
 
-    post :update_admins, params: { admins: "#{aaron.id}" }
+    post :update_admins, params: { admins: ['', aaron.id.to_s] }
 
     quentin.reload
     aaron.reload
 
-    assert !quentin.is_admin?
-    assert aaron.is_admin?
+    refute quentin.is_admin?
     assert aaron.is_admin?
     assert User.current_user.person.is_admin?
   end
@@ -202,18 +201,18 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'get edit tag' do
-    p = Factory(:person)
-    model = Factory(:model)
-    tag = Factory :tag, value: 'twinkle', source: p.user, annotatable: model
+    p = FactoryBot.create(:person)
+    model = FactoryBot.create(:model)
+    tag = FactoryBot.create :tag, value: 'twinkle', source: p.user, annotatable: model
     get :edit_tag, params: { id: tag.value.id }
     assert_response :success
   end
 
   test 'non admin cannot get edit tag' do
-    login_as(Factory(:user))
-    p = Factory(:person)
-    model = Factory(:model)
-    tag = Factory :tag, value: 'twinkle', source: p.user, annotatable: model
+    login_as(FactoryBot.create(:user))
+    p = FactoryBot.create(:person)
+    model = FactoryBot.create(:model)
+    tag = FactoryBot.create :tag, value: 'twinkle', source: p.user, annotatable: model
     get :edit_tag, params: { id: tag.value.id }
     assert_response :redirect
     refute_nil flash[:error]
@@ -238,8 +237,8 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'storage usage stats' do
-    Factory(:rightfield_datafile)
-    Factory(:rightfield_annotated_datafile)
+    FactoryBot.create(:rightfield_datafile)
+    FactoryBot.create(:rightfield_annotated_datafile)
     get :get_stats, xhr: true, params: { page: 'storage_usage_stats' }
     assert_response :success
   end
@@ -260,13 +259,67 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'update_redirect_to for update_features_enabled' do
-    post :update_features_enabled, params: { time_lock_doi_for: '1', port: '25' }
+    post :update_features_enabled, params: { time_lock_doi_for: '1',
+                                             port: '25',
+                                             error_grouping_log_base: 2,
+                                             error_grouping_timeout: 1.minute }
     assert_redirected_to admin_path
     assert_nil flash[:error]
 
     post :update_features_enabled, params: { time_lock_doi_for: '' }
     assert_redirected_to features_enabled_admin_path
     refute_nil flash[:error]
+  end
+
+  test 'update error_grouping_enabled' do
+    with_config_value(:error_grouping_enabled, false) do
+      post :update_features_enabled, params: { error_grouping_enabled: '1' }
+      assert Seek::Config.error_grouping_enabled
+      post :update_features_enabled, params: { error_grouping_enabled: '0' }
+      assert_equal false, Seek::Config.error_grouping_enabled
+    end
+  end
+
+  test 'update error_grouping_timeout' do
+    # Checks for warnings when not setting error_grouping_timeout
+    with_config_value(:filtering_enabled, true) do
+      post :update_features_enabled, params: { filtering_enabled: '0' }
+      assert_nil flash[:error]
+    end
+    # Checks setting error_grouping_timeout
+    with_config_value(:error_grouping_timeout, 1.minute) do
+      post :update_features_enabled, params: { error_grouping_timeout: '1' }
+      assert_nil flash[:error]
+      assert_equal 1.seconds, Seek::Config.error_grouping_timeout
+      post :update_features_enabled, params: { error_grouping_timeout: '10 sec' }
+      assert_nil flash[:error]
+      assert_equal 10.seconds, Seek::Config.error_grouping_timeout
+      post :update_features_enabled, params: { error_grouping_timeout: '2 min' }
+      assert_nil flash[:error]
+      assert_equal 120.seconds, Seek::Config.error_grouping_timeout
+      post :update_features_enabled, params: { error_grouping_timeout: 'x' }
+      assert_equal 'Please enter a valid time for the error grouping timeout.', flash[:error]
+    end
+  end
+
+  test 'update error_grouping_log_base' do
+    # Checks for warnings when not setting error_grouping_log_base
+    with_config_value(:filtering_enabled, true) do
+      post :update_features_enabled, params: { filtering_enabled: '0' }
+      assert_nil flash[:error]
+    end
+    # Checks setting error_grouping_log_base
+    with_config_value(:error_grouping_log_base, 2) do
+      post :update_features_enabled, params: { error_grouping_log_base: '3' }
+      assert_nil flash[:error]
+      assert_equal 3, Seek::Config.error_grouping_log_base
+      post :update_features_enabled, params: { error_grouping_log_base: '3.4' }
+      assert_equal 'Please enter a valid positive number for the error grouping log base', flash[:error]
+      assert_equal 3, Seek::Config.error_grouping_log_base
+      post :update_features_enabled, params: { error_grouping_log_base: '-1' }
+      assert_equal 'Please enter a valid positive number for the error grouping log base', flash[:error]
+      assert_equal 3, Seek::Config.error_grouping_log_base
+    end
   end
 
   test 'update_redirect_to for update_home_setting' do
@@ -291,8 +344,8 @@ class AdminControllerTest < ActionController::TestCase
   end
 
   test 'snapshot and doi stats' do
-    investigation = Factory(:investigation, title: 'i1', description: 'not blank',
-                            policy: Factory(:downloadable_public_policy))
+    investigation = FactoryBot.create(:investigation, title: 'i1', description: 'not blank',
+                            policy: FactoryBot.create(:downloadable_public_policy))
     snapshot = investigation.create_snapshot
     snapshot.update_column(:doi, '10.5072/testytest')
     AssetDoiLog.create(asset_type: 'investigation',
@@ -319,7 +372,7 @@ class AdminControllerTest < ActionController::TestCase
 
   test 'admin required to clear failed jobs' do
     logout
-    person = Factory(:person)
+    person = FactoryBot.create(:person)
 
     Delayed::Job.destroy_all
     job = Delayed::Job.create!
@@ -518,6 +571,28 @@ class AdminControllerTest < ActionController::TestCase
       post :update_settings, params: {session_store_timeout:'fish'}
       assert_equal 1.hour, Seek::Config.session_store_timeout
     end
+  end
+
+  test 'clear cache' do
+    Rails.cache.write('test-key', 'hello')
+    assert_equal 'hello', Rails.cache.fetch('test-key')
+
+    admin = FactoryBot.create(:admin)
+    person = FactoryBot.create(:project_administrator)
+
+    login_as(person)
+    post :clear_cache
+    assert_redirected_to :root
+    refute_nil flash[:error]
+    assert_nil flash[:notice]
+    assert_equal 'hello', Rails.cache.fetch('test-key')
+
+    login_as(admin)
+    post :clear_cache
+    assert_response :success
+    refute_nil flash[:notice]
+    assert_nil flash[:error]
+    assert_nil Rails.cache.fetch('test-key')
   end
 
 end

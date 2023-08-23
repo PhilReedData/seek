@@ -22,8 +22,13 @@ class SnapshotsController < ApplicationController
 
   def show
     respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @snapshot, include: [params[:include]] }
+      if @snapshot.content_blob.present?
+        format.html
+        format.json { render json: @snapshot, include: [params[:include]] }
+      else
+        format.html {  render "show_no_content_blob" }
+        format.json { render json: { errors: [{ title: 'Incomplete snapshot', details: 'Snapshot has no content. It may still be being generated' }] }, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -101,7 +106,7 @@ class SnapshotsController < ApplicationController
 
   def find_resource # This is hacky :(
     resource, id = request.path.split('/')[1, 2]
-    @resource = resource.singularize.classify.constantize.find(id)
+    @resource = safe_class_lookup(resource.singularize.classify).find(id)
   end
 
   def auth_resource

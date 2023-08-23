@@ -61,7 +61,7 @@ module SampleTypesHelper
   end
 
   def sample_type_grouped_options
-    sample_types = SampleType.all
+    sample_types = Seek::Config.project_single_page_advanced_enabled && !displaying_single_page? ? SampleType.without_template : SampleType.all
     projects = current_user.person.projects
     person_sample_types = sample_types.select { |type| (type.projects & projects).any? }
     other_sample_types = sample_types - person_sample_types
@@ -90,13 +90,17 @@ module SampleTypesHelper
 
   private
 
+  def displayed_sample_attribute_types
+    SampleAttributeType.all.select{|x|!x.linked_custom_metadata?}
+  end
+
   def attribute_type_link(sample_type_attribute)
     type = sample_type_attribute.sample_attribute_type.title
     if sample_type_attribute.seek_sample?
       type += ' - ' + link_to(sample_type_attribute.linked_sample_type.title, sample_type_attribute.linked_sample_type)
     end
 
-    if sample_type_attribute.controlled_vocab?
+    if sample_type_attribute.controlled_vocab? || sample_type_attribute.seek_cv_list?
       type += ' - ' + link_to(sample_type_attribute.sample_controlled_vocab.title, sample_type_attribute.sample_controlled_vocab)
     end
     type

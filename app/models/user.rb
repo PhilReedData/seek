@@ -2,6 +2,8 @@ require 'digest/sha1'
 
 class User < ApplicationRecord
   MIN_PASSWORD_LENGTH = 10
+  MAX_LOGIN_LENGTH = 120
+  MIN_LOGIN_LENGTH = 3
 
   acts_as_annotation_source
 
@@ -34,7 +36,7 @@ class User < ApplicationRecord
   validates     :password_confirmation, presence: true, if: :password_required?
   validates_length_of       :password, minimum: MIN_PASSWORD_LENGTH, if: :password_required?
   validates_confirmation_of :password, if: :password_required?
-  validates_length_of       :login, within: 3..40
+  validates_length_of       :login, within: MIN_LOGIN_LENGTH..MAX_LOGIN_LENGTH
   validates_uniqueness_of   :login, case_sensitive: false
 
   validates :email, format: { with: RFC822::EMAIL }, if: -> { email }
@@ -221,14 +223,14 @@ class User < ApplicationRecord
     Hash[*person.projects.collect { |p|; [p.id, p.name]; }.flatten]
   end
 
-  # returns a 'whitelist' favourite group for the user (or 'nil' if not found)
-  def get_whitelist
-    FavouriteGroup.where(user_id: id, name: FavouriteGroup::WHITELIST_NAME).first
+  # returns a 'allowlist' favourite group for the user (or 'nil' if not found)
+  def get_allowlist
+    FavouriteGroup.where(user_id: id, name: FavouriteGroup::ALLOWLIST_NAME).first
   end
 
-  # returns a 'blacklist' favourite group for the user (or 'nil' if not found)
-  def get_blacklist
-    FavouriteGroup.where(user_id: id, name: FavouriteGroup::BLACKLIST_NAME).first
+  # returns a 'denylist' favourite group for the user (or 'nil' if not found)
+  def get_denylist
+    FavouriteGroup.where(user_id: id, name: FavouriteGroup::DENYLIST_NAME).first
   end
 
   def currently_online

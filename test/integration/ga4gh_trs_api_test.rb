@@ -14,7 +14,7 @@ class Ga4ghTrsApiTest < ActionDispatch::IntegrationTest
   end
 
   test 'should get nested descriptor file via relative path' do
-    workflow = Factory(:nf_core_ro_crate_workflow, policy: Factory(:public_policy))
+    workflow = FactoryBot.create(:nf_core_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
 
     get "/ga4gh/trs/v2/tools/#{workflow.id}/versions/1/NFL/descriptor/docs/images/nfcore-ampliseq_logo.png", headers: { 'Accept' => 'text/plain' }
     assert_response :success
@@ -22,8 +22,17 @@ class Ga4ghTrsApiTest < ActionDispatch::IntegrationTest
     assert @response.body.start_with?("\x89PNG\r\n")
   end
 
+  test 'should get nested descriptor file via relative path using PLAIN_ type prefix as plain text' do
+    workflow = FactoryBot.create(:nf_core_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
+
+    get "/ga4gh/trs/v2/tools/#{workflow.id}/versions/1/PLAIN_NFL/descriptor/main.nf"
+    assert_response :success
+    assert_equal 'text/plain; charset=utf-8', @response.headers['Content-Type']
+    assert @response.body.start_with?("#!/usr/bin/env nextflow")
+  end
+
   test 'should get containerfile if Dockerfile present' do
-    workflow = Factory(:nf_core_ro_crate_workflow, policy: Factory(:public_policy))
+    workflow = FactoryBot.create(:nf_core_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
 
     get "/ga4gh/trs/v2/tools/#{workflow.id}/versions/1/NFL/files"
     assert_response :success
@@ -55,7 +64,7 @@ class Ga4ghTrsApiTest < ActionDispatch::IntegrationTest
   end
 
   test 'should 404 if no containerfile' do
-    workflow = Factory(:generated_galaxy_ro_crate_workflow, policy: Factory(:public_policy))
+    workflow = FactoryBot.create(:generated_galaxy_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
     get "/ga4gh/trs/v2/tools/#{workflow.id}/versions/1/containerfile"
     assert_response :not_found
     r = JSON.parse(@response.body)
@@ -63,14 +72,14 @@ class Ga4ghTrsApiTest < ActionDispatch::IntegrationTest
   end
 
   test 'should return empty array if no tests' do
-    workflow = Factory(:generated_galaxy_ro_crate_workflow, policy: Factory(:public_policy))
+    workflow = FactoryBot.create(:generated_galaxy_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
     get "/ga4gh/trs/v2/tools/#{workflow.id}/versions/1/GALAXY/tests"
     r = JSON.parse(@response.body)
     assert_equal [], r
   end
 
   test 'should get zip of all files' do
-    workflow = Factory(:generated_galaxy_ro_crate_workflow, policy: Factory(:public_policy))
+    workflow = FactoryBot.create(:generated_galaxy_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
 
     get "/ga4gh/trs/v2/tools/#{workflow.id}/versions/1/GALAXY/files?format=zip"
 
@@ -88,7 +97,8 @@ class Ga4ghTrsApiTest < ActionDispatch::IntegrationTest
   end
 
   test 'should throw spec-compliant JSON error if unexpected error occurs' do
-    workflow = Factory(:generated_galaxy_ro_crate_workflow, policy: Factory(:public_policy))
+    Thread.current[:ignore_trs_errors] = true
+    workflow = FactoryBot.create(:generated_galaxy_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
     Workflow.stub(:find_by_id, -> (_) { raise 'oh no!' }) do
       get "/ga4gh/trs/v2/tools/#{workflow.id}/versions/1/containerfile"
     end
@@ -96,14 +106,16 @@ class Ga4ghTrsApiTest < ActionDispatch::IntegrationTest
     assert_response :internal_server_error
     r = JSON.parse(@response.body)
     assert r['message'].include?('An unexpected error')
+  ensure
+    Thread.current[:ignore_trs_errors] = nil
   end
 
   test 'should filter workflows through extended GA4GH endpoint' do
-    p1 = Factory(:project, title: 'MegaWorkflows')
-    p2 = Factory(:project, title: 'CovidSux')
-    w1 = Factory(:workflow, projects: [p1], policy: Factory(:public_policy))
-    w2 = Factory(:workflow, projects: [p2], policy: Factory(:public_policy))
-    w3 = Factory(:workflow, projects: [p1, p2], policy: Factory(:public_policy))
+    p1 = FactoryBot.create(:project, title: 'MegaWorkflows')
+    p2 = FactoryBot.create(:project, title: 'CovidSux')
+    w1 = FactoryBot.create(:workflow, projects: [p1], policy: FactoryBot.create(:public_policy))
+    w2 = FactoryBot.create(:workflow, projects: [p2], policy: FactoryBot.create(:public_policy))
+    w3 = FactoryBot.create(:workflow, projects: [p1, p2], policy: FactoryBot.create(:public_policy))
 
     get '/ga4gh/trs/v2/extended/organizations'
 
@@ -127,5 +139,12 @@ class Ga4ghTrsApiTest < ActionDispatch::IntegrationTest
     assert_equal 2, ids.length
     assert ids.include?(w1.id.to_s)
     assert ids.include?(w3.id.to_s)
+  end
+
+  test 'should not error on HEAD request' do
+    workflow = FactoryBot.create(:nf_core_ro_crate_workflow, policy: FactoryBot.create(:public_policy))
+
+    head "/ga4gh/trs/v2/tools/#{workflow.id}"
+    assert_response :success
   end
 end

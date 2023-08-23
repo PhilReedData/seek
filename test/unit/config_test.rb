@@ -53,14 +53,14 @@ class ConfigTest < ActiveSupport::TestCase
     end
   end
 
-  test 'blacklisted feeds' do
-    Seek::Config.blacklisted_feeds = { 'http://google.com' => Time.parse('1 Sep 2014'), 'http://fish.com' => Time.parse('1 June 2014') }
-    assert_equal Time.parse('1 Sep 2014'), Seek::Config.blacklisted_feeds['http://google.com']
-    assert_equal Time.parse('1 June 2014'), Seek::Config.blacklisted_feeds['http://fish.com']
+  test 'denylisted feeds' do
+    Seek::Config.denylisted_feeds = { 'http://google.com' => Time.parse('1 Sep 2014'), 'http://fish.com' => Time.parse('1 June 2014') }
+    assert_equal Time.parse('1 Sep 2014'), Seek::Config.denylisted_feeds['http://google.com']
+    assert_equal Time.parse('1 June 2014'), Seek::Config.denylisted_feeds['http://fish.com']
   end
 
   test 'filestore_location' do
-    cb = Factory :content_blob
+    cb = FactoryBot.create :content_blob
 
     assert_equal 'tmp/testing-filestore', Seek::Config.filestore_path
     assert_equal "#{Rails.root}/tmp/testing-filestore/assets", Seek::Config.asset_filestore_path
@@ -358,6 +358,14 @@ class ConfigTest < ActiveSupport::TestCase
     refute setting[:encrypted_value].include?(password)
   end
 
+  test 'set enable_starttls_auto to false' do
+    Seek::Config.set_smtp_settings 'enable_starttls_auto', false
+
+    # must be false and not nil
+    refute_nil ActionMailer::Base.smtp_settings[:enable_starttls_auto]
+    refute ActionMailer::Base.smtp_settings[:enable_starttls_auto]
+  end
+
   test 'doi_prefix, doi_suffix' do
     assert_equal '10.5072', Seek::Config.doi_prefix
     assert_equal 'Sysmo.SEEK', Seek::Config.doi_suffix
@@ -473,8 +481,8 @@ class ConfigTest < ActiveSupport::TestCase
   end
 
   test 'project-specific setting' do
-    many_bananas_project = Factory(:project)
-    no_bananas_project = Factory(:project)
+    many_bananas_project = FactoryBot.create(:project)
+    no_bananas_project = FactoryBot.create(:project)
     many_bananas_project.settings.set('banana_count', 10)
     no_bananas_project.settings.set('banana_count', 0)
 
@@ -483,7 +491,7 @@ class ConfigTest < ActiveSupport::TestCase
   end
 
   test 'project-specific settings can be accessed in various ways' do
-    many_bananas_project = Factory(:project)
+    many_bananas_project = FactoryBot.create(:project)
     many_bananas_project.settings.set('banana_count', 10)
 
     assert_equal 10, many_bananas_project.settings.get('banana_count')
@@ -491,8 +499,8 @@ class ConfigTest < ActiveSupport::TestCase
   end
 
   test 'project-specific settings do no conflict with global settings' do
-    many_bananas_project = Factory(:project)
-    no_bananas_project = Factory(:project)
+    many_bananas_project = FactoryBot.create(:project)
+    no_bananas_project = FactoryBot.create(:project)
     many_bananas_project.settings.set('banana_count', 10)
     Settings.global.set('banana_count', 5)
     no_bananas_project.settings.set('banana_count', 0)

@@ -14,7 +14,6 @@ class IsaAssaysController < ApplicationController
     update_sharing_policies @isa_assay.assay
     @isa_assay.assay.contributor = current_person
     @isa_assay.sample_type.contributor = User.current_user.person
-
     if @isa_assay.save
       redirect_to single_page_path(id: @isa_assay.assay.projects.first, item_type: 'assay',
                                    item_id: @isa_assay.assay, notice: 'The ISA assay was created successfully!')
@@ -119,7 +118,7 @@ class IsaAssaysController < ApplicationController
                                         sample_attribute_type_id isa_tag_id
                                         sample_controlled_vocab_id
                                         linked_sample_type_id
-                                        description iri
+                                        description pid
                                         unit_id _destroy] }, { assay_ids: [] }]
   end
 
@@ -130,8 +129,11 @@ class IsaAssaysController < ApplicationController
   def find_requested_item
     @isa_assay = IsaAssay.new
     @isa_assay.populate(params[:id])
-    unless requested_item_authorized?(@isa_assay.assay)
+
+    if @isa_assay.sample_type.nil? || !requested_item_authorized?(@isa_assay.assay)
       flash[:error] = "You are not authorized to edit this #{t('isa_assay')}"
+      flash[:error] = 'Resource not found.' if @isa_assay.sample_type.nil?
+
       redirect_to single_page_path(id: @isa_assay.assay.projects.first, item_type: 'assay',
                                    item_id: @isa_assay.assay)
     end

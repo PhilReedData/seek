@@ -56,7 +56,6 @@ class ProgrammesController < ApplicationController
   end
 
   def handle_administrators
-    params[:programme][:programme_administrator_ids] = params[:programme][:programme_administrator_ids].split(',')
     prevent_removal_of_self_as_programme_administrator
   end
 
@@ -135,18 +134,22 @@ class ProgrammesController < ApplicationController
 
   def fetch_assets
     @programmes = super
-    return @programmes if User.admin_logged_in?
+    @programmes = @programmes.all if @programmes.eql?(Programme) #necessary because the super can return the class to defer calling .all, here it is ok to do so
 
-    if User.programme_administrator_logged_in?
-       @programmes = @programmes.all if @programmes.eql?(Programme) #necessary because the super can return the class to defer calling .all, here it is ok to do so
-       @programmes = @programmes.activated | (@programmes & current_person.administered_programmes)
+    # filter out non-activated, unless user can administer it
+    if User.admin_logged_in?
+      @programmes
+    elsif User.programme_administrator_logged_in?
+      @programmes.select do |programme|
+        programme.is_activated? || current_person.is_programme_administrator?(programme)
+      end
     else
-       @programmes = @programmes.activated
+      @programmes.select(&:is_activated?)
     end
   end
 
   def programme_params
-    handle_administrators if params[:programme][:programme_administrator_ids] && !(params[:programme][:programme_administrator_ids].is_a? Array)
+    handle_administrators if params[:programme][:programme_administrator_ids]
     if action_name == 'create' && !User.admin_logged_in?
       params[:programme][:programme_administrator_ids] ||= []
       params[:programme][:programme_administrator_ids] << current_person.id.to_s
@@ -155,7 +158,7 @@ class ProgrammesController < ApplicationController
 
     params.require(:programme).permit(:avatar_id, :description, :first_letter, :title, :uuid, :web_page,
                                       { project_ids: [] }, :funding_details, { programme_administrator_ids: [] },
-                                      :activation_rejection_reason, :funding_codes,
+                                      :activation_rejection_reason, { funding_codes: [] },
                                       :open_for_projects,
                                       discussion_links_attributes:[:id, :url, :label, :_destroy])
   end

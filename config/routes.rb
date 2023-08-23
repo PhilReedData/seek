@@ -67,6 +67,11 @@ SEEK::Application.routes.draw do
     end
   end
 
+  concern :explorable_spreadsheet do
+    member do
+      get :explore
+    end
+  end
   concern :has_versions do
     member do
       post :create_version
@@ -131,6 +136,15 @@ SEEK::Application.routes.draw do
         patch 'blob/*path' => 'git#move_file', as: :git_move_file
         get 'freeze' => 'git#freeze_preview', as: :git_freeze_preview
         post 'freeze' => 'git#freeze', as: :git_freeze
+        patch '' => 'git#update', as: :git_update_version
+      end
+    end
+  end
+
+  concern :has_avatar do
+    resources :avatars do
+      member do
+        post :select
       end
     end
   end
@@ -165,6 +179,7 @@ SEEK::Application.routes.draw do
       post :edit_tag
       post :update_imprint_setting
       post :clear_failed_jobs
+      post :clear_cache
     end
     concerns :has_dashboard, controller: :stats
   end
@@ -270,7 +285,7 @@ SEEK::Application.routes.draw do
 
   ### YELLOW PAGES ###
 
-  resources :people, concerns: [:publishable] do
+  resources :people, concerns: [:publishable, :has_avatar] do
     collection do
       get :typeahead
       get :register
@@ -286,23 +301,19 @@ SEEK::Application.routes.draw do
       post :gatekeeper_decide
       get :gatekeeper_decision_result
       get :waiting_approval_assets
+      post :cancel_publishing_request
       get :select
       get :items
       get :batch_sharing_permission_preview
-      post :batch_change_permssion_for_selected_items
+      post :batch_change_permission_for_selected_items
       post :batch_sharing_permission_changed
     end
     resources :projects, :programmes, :institutions, :assays, :studies, :investigations, :models, :sops, :workflows,
               :data_files, :presentations, :publications, :documents, :events, :sample_types, :samples, :specimens,
               :strains, :file_templates, :placeholders, :collections, :templates, only: [:index]
-    resources :avatars do
-      member do
-        post :select
-      end
-    end
   end
 
-  resources :projects do
+  resources :projects, concerns: [:has_avatar] do
     collection do
       get :request_institutions
       get :guided_join
@@ -338,11 +349,6 @@ SEEK::Application.routes.draw do
         get :test_endpoint
         get :fetch_spaces
         get :browse
-      end
-    end
-    resources :avatars do
-      member do
-        post :select
       end
     end
     resources :folders do
@@ -384,18 +390,13 @@ SEEK::Application.routes.draw do
     end
   end
 
-  resources :institutions do
+  resources :institutions, concerns: [:has_avatar] do
     collection do
       get :request_all
       get :request_all_sharing_form
       get  :typeahead
     end
     resources :people, :programmes, :projects, :specimens, only: [:index]
-    resources :avatars do
-      member do
-        post :select
-      end
-    end
   end
 
   ### ISA ###
@@ -466,7 +467,7 @@ SEEK::Application.routes.draw do
 
   ### ASSETS ###
 
-  resources :data_files, concerns: [:has_content_blobs, :has_versions, :has_doi, :publishable, :asset] do
+  resources :data_files, concerns: [:has_content_blobs, :has_versions, :has_doi, :publishable, :asset, :explorable_spreadsheet] do
     collection do
       get :filter
       get :provide_metadata
@@ -475,8 +476,6 @@ SEEK::Application.routes.draw do
       post :create_metadata
     end
     member do
-      get :plot
-      get :explore
       get :samples_table
       get :select_sample_type
       get :confirm_extraction
@@ -508,7 +507,7 @@ SEEK::Application.routes.draw do
     resources :people, :programmes, :projects, :investigations, :assays, :studies, :publications, :events, :collections, :organisms, :human_diseases, only: [:index]
   end
 
-  resources :sops, concerns: [:has_content_blobs, :publishable, :has_doi, :has_versions, :asset] do
+  resources :sops, concerns: [:has_content_blobs, :publishable, :has_doi, :has_versions, :asset, :explorable_spreadsheet] do
     resources :people, :programmes, :projects, :investigations, :assays, :samples, :studies, :publications, :events, :workflows, :collections, only: [:index]
   end
 
@@ -537,29 +536,25 @@ SEEK::Application.routes.draw do
     resources :people, :programmes, :projects, :investigations, :assays, :samples, :studies, :publications, :events, :sops, :collections, :presentations, :documents, :data_files, only: [:index]
   end
 
-  resources :workflow_classes, except: [:show]
+  resources :workflow_classes, except: [:show], concerns: [:has_avatar]
 
-  resources :file_templates, concerns: [:has_content_blobs, :has_versions, :has_doi, :publishable, :asset] do
+  resources :file_templates, concerns: [:has_content_blobs, :has_versions, :has_doi, :publishable, :asset, :explorable_spreadsheet] do
     collection do
       get :filter
       get :provide_metadata
       post :create_content_blob
       post :create_metadata
     end
-    member do
-      get :explore
-    end
     resources :people, :programmes, :projects, :collections, :investigations, :studies, :assays, :data_files, :publications, :placeholders, only: [:index]
   end
 
-  resources :placeholders, concerns: [:asset] do
+  resources :placeholders, concerns: [:asset, :explorable_spreadsheet] do
     collection do
       get :filter
       get :provide_metadata
       post :create_metadata
     end
     member do
-      get :explore
       get :data_file
     end
     resources :people, :programmes, :projects, :collections, :investigations, :studies, :assays, :data_files, :publications, :file_templates, only: [:index]
@@ -570,12 +565,7 @@ SEEK::Application.routes.draw do
       post :examine_url
     end
   end
-  resources :programmes do
-    resources :avatars do
-      member do
-        post :select
-      end
-    end
+  resources :programmes, concerns: [:has_avatar] do
     collection do
       get :awaiting_activation
     end
@@ -715,18 +705,13 @@ SEEK::Application.routes.draw do
 
   ### DOCUMENTS
 
-  resources :documents, concerns: [:has_content_blobs, :publishable, :has_doi, :has_versions, :asset] do
+  resources :documents, concerns: [:has_content_blobs, :publishable, :has_doi, :has_versions, :asset, :explorable_spreadsheet] do
     resources :people, :programmes, :projects, :programmes, :investigations, :assays, :studies, :publications, :events, :collections, :workflows, only: [:index]
   end
 
-  resources :collections, concerns: [:publishable, :has_doi, :asset] do
+  resources :collections, concerns: [:publishable, :has_doi, :asset, :has_avatar] do
     resources :items, controller: :collection_items
     resources :people, :programmes, :projects, :programmes, :investigations, :assays, :studies, :publications, :events, :collections, only: [:index]
-    resources :avatars do
-      member do
-        post :select
-      end
-    end
   end
 
   resources :git_repositories, only: [] do
@@ -766,6 +751,13 @@ SEEK::Application.routes.draw do
       get :dynamic_table_data
       get :export_isa, action: :export_isa
     end
+    collection do
+      get :batch_sharing_permission_preview
+      post :batch_change_permission_for_selected_items
+      post :batch_sharing_permission_changed
+      post :export_to_excel, action: :export_to_excel
+      get :download_samples_excel, action: :download_samples_excel
+    end
   end
 
   ### ISA STUDY
@@ -795,7 +787,6 @@ SEEK::Application.routes.draw do
   get '/search/save' => 'search#save', as: :save_search
   get '/search/delete' => 'search#delete', as: :delete_search
   get 'svg/:id.:format' => 'svg#show', as: :svg
-  get '/tags/latest' => 'tags#latest', as: :latest_tags
   get '/tags/query' => 'tags#query', as: :query_tags
   get '/tags' => 'tags#index', as: :all_tags
   get '/tags/:id' => 'tags#show', as: :show_tag
@@ -847,4 +838,11 @@ SEEK::Application.routes.draw do
   get '/home/isa_colours' => 'homes#isa_colours'
 
   post '/previews/markdown' => 'previews#markdown'
+
+  # cookie consent
+  get 'cookies/consent' => 'cookies#consent'
+  post 'cookies/consent' => 'cookies#set_consent'
+
+  # for the api docs under production, avoids special rewrite rules
+  get 'api', to: static("api/index.html") if Rails.env.production?
 end

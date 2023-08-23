@@ -2,7 +2,7 @@ require 'test_helper'
 
 class GitBlobTest < ActiveSupport::TestCase
   setup do
-    @resource = Factory(:ro_crate_git_workflow)
+    @resource = FactoryBot.create(:ro_crate_git_workflow)
     @git_version = @resource.git_version
   end
 
@@ -28,7 +28,7 @@ class GitBlobTest < ActiveSupport::TestCase
 
   test 'unfetched remote blob' do
     mock_remote_file "#{Rails.root}/test/fixtures/files/little_file.txt", 'http://somewhere.com/text.txt'
-    git_version = Factory(:git_version)
+    git_version = FactoryBot.create(:git_version)
     disable_authorization_checks do
       git_version.add_remote_file('remote.txt', 'http://somewhere.com/text.txt')
       git_version.save!
@@ -63,7 +63,7 @@ class GitBlobTest < ActiveSupport::TestCase
 
   test 'fetched remote blob' do
     mock_remote_file "#{Rails.root}/test/fixtures/files/little_file.txt", 'http://somewhere.com/text.txt'
-    git_version = Factory(:git_version)
+    git_version = FactoryBot.create(:git_version)
     disable_authorization_checks do
       git_version.add_remote_file('remote.txt', 'http://somewhere.com/text.txt')
       git_version.fetch_remote_file('remote.txt')
@@ -98,7 +98,7 @@ class GitBlobTest < ActiveSupport::TestCase
   end
 
   test 'search terms' do
-    git_version = Factory(:git_version)
+    git_version = FactoryBot.create(:git_version)
     disable_authorization_checks do
       git_version.add_file('text.txt', open_fixture_file('large_text_file.txt'))
       git_version.add_file('binary.png', open_fixture_file('file_picture.png'))
@@ -121,5 +121,17 @@ class GitBlobTest < ActiveSupport::TestCase
 
     refute_equal blob1.object_id, blob2.object_id
     assert_equal blob1, blob2
+  end
+
+  test 'delegate read to file' do
+    blob = @git_version.get_blob('sort-and-change-case.ga')
+    one = blob.read(1)
+    assert_equal "{", one
+    sixteen = blob.read(16)
+    assert_equal 16, sixteen.length
+    eof = blob.read
+    refute eof.start_with?('{')
+    assert_includes eof, 'sort-and-change-case'
+    assert_equal ((blob.size - 16) - 1), eof.length
   end
 end

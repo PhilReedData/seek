@@ -67,7 +67,6 @@ class ContentBlobsController < ApplicationController
   end
 
   def download
-    @asset.just_used if @asset.respond_to?(:just_used)
 
     if @asset.respond_to?(:openbis?) && @asset.openbis?
       respond_to do |format|
@@ -161,7 +160,7 @@ class ContentBlobsController < ApplicationController
     params.each do |param, value|
       if param.end_with?('_id')
         begin
-          c = param.chomp('_id').classify.constantize
+          c = safe_class_lookup(param.chomp('_id').classify)
         rescue NameError
         else
           if c.method_defined?(:content_blob) || c.method_defined?(:content_blobs)

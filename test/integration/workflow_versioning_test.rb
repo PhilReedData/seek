@@ -5,11 +5,11 @@ class WorkflowVersioningTest < ActionDispatch::IntegrationTest
   include HtmlHelper
 
   setup do
-    @galaxy = WorkflowClass.find_by_key('galaxy') || Factory(:galaxy_workflow_class)
+    @galaxy = WorkflowClass.find_by_key('galaxy') || FactoryBot.create(:galaxy_workflow_class)
   end
 
   test 'uploads a new version of a workflow' do
-    workflow = Factory(:workflow)
+    workflow = FactoryBot.create(:workflow)
     workflow_id = workflow.id
     person = workflow.contributor
     login_as(person.user)
@@ -64,7 +64,7 @@ class WorkflowVersioningTest < ActionDispatch::IntegrationTest
   end
 
   test 'new workflow version upload copes with errors' do
-    workflow = Factory(:workflow)
+    workflow = FactoryBot.create(:workflow)
     projects = workflow.projects
     workflow_id = workflow.id
     person = workflow.contributor
@@ -145,7 +145,7 @@ class WorkflowVersioningTest < ActionDispatch::IntegrationTest
   end
 
   test 'new workflow version upload copes with workflow class change' do
-    workflow = Factory(:workflow)
+    workflow = FactoryBot.create(:workflow)
     projects = workflow.projects
     workflow_id = workflow.id
     person = workflow.contributor
@@ -176,7 +176,7 @@ class WorkflowVersioningTest < ActionDispatch::IntegrationTest
     metadata[:internals] = metadata[:internals].to_json
 
     assert_response :success
-    assert_empty assigns(:errors)
+    assert_empty assigns(:workflow).extraction_errors
     assert_equal 'galaxy', assigns(:workflow).workflow_class.key
     assert_select 'form[action=?]', create_version_metadata_workflow_path(workflow_id)
     assert_select '#workflow_submit_btn[value=?]', 'Update'

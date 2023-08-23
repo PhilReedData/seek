@@ -2,7 +2,7 @@ require 'test_helper'
 
 class WorkflowRepositoryBuilderTest < ActiveSupport::TestCase
   setup do
-    @galaxy = WorkflowClass.find_by_key('galaxy') || Factory(:galaxy_workflow_class)
+    @galaxy = WorkflowClass.find_by_key('galaxy') || FactoryBot.create(:galaxy_workflow_class)
   end
 
   test 'builds local file crate repository' do
@@ -87,11 +87,11 @@ class WorkflowRepositoryBuilderTest < ActiveSupport::TestCase
     builder.workflow_class = @galaxy
     workflow = builder.build
     workflow.title = "Test"
-    workflow.projects = [Factory(:project)]
+    workflow.projects = [FactoryBot.create(:project)]
     disable_authorization_checks { workflow.save }
     crate = workflow.ro_crate
 
-    assert_equal 20, crate.entities.count # TODO: Change me to 19 when #960 resolved
+    assert_equal 19, crate.entities.count
     assert crate.get("ro-crate-metadata.json").is_a?(ROCrate::Metadata)
     assert crate.get("ro-crate-preview.html").is_a?(ROCrate::Preview)
     assert crate.get("./").is_a?(ROCrate::WorkflowCrate)

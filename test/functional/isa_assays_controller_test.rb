@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class IsaAssaysControllerTest < ActionController::TestCase
-  fixtures :all
 
   include AuthenticatedTestHelper
   include SharingFormTestHelper

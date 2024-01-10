@@ -3,7 +3,6 @@ require 'test_helper'
 class OmniauthTest < ActionDispatch::IntegrationTest
   include AuthenticatedTestHelper
 
-  fixtures :users, :people
 
   def setup
     OmniAuth.config.test_mode = true

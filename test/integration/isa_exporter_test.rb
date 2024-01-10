@@ -3,7 +3,6 @@ require 'json'
 require 'json-schema'
 
 class IsaExporterTest < ActionDispatch::IntegrationTest
-  fixtures :all
   include SharingFormTestHelper
 
   def self.store

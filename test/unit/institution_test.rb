@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class InstitutionTest < ActiveSupport::TestCase
-  fixtures :institutions, :projects, :work_groups, :users, :group_memberships, :people
   # Replace this with your real tests.
 
   def test_delete_inst_deletes_workgroup

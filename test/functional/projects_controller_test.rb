@@ -8,7 +8,6 @@ class ProjectsControllerTest < ActionController::TestCase
   include ActionView::Helpers::NumberHelper
   include SharingFormTestHelper
 
-  fixtures :all
 
   def setup
     login_as(FactoryBot.create(:admin))

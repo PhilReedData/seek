@@ -1,3 +1,5 @@
+require 'ro_crate'
+
 class WorkflowsController < ApplicationController
   include Seek::IndexPager
   include Seek::AssetsCommon
@@ -19,7 +21,7 @@ class WorkflowsController < ApplicationController
 
   api_actions :index, :show, :create, :update, :destroy, :ro_crate, :create_version
 
-  rescue_from ROCrate::ReadException do |e|
+  rescue_from ::RoCrate::ReadException do |e|
     logger.error("Error whilst attempting to read RO-Crate metadata for #{@workflow&.id}.")
     message = "Couldn't read RO-Crate metadata. Check the file is valid."
     respond_to do |format|
@@ -31,7 +33,7 @@ class WorkflowsController < ApplicationController
     end
   end
 
-  rescue_from ROCrate::WriteException do |e|
+  rescue_from RoCrate::WriteException do |e|
     exception_notification(500, e) unless Rails.application.config.consider_all_requests_local
     message = "Couldn't generate RO-Crate. Check the ro-crate-metadata.json file is valid."
     respond_to do |format|

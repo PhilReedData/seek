@@ -3,12 +3,12 @@ require 'ro_crate'
 
 module Seek
   module WorkflowExtractors
-    class ROCrate < ROLike
+    class RoCrate < RoLike
       def has_tests?
         open_crate do |crate|
           crate.test_suites.any?
         end
-      rescue ::ROCrate::ReadException => e
+      rescue ::RoCrate::ReadException => e
         false
       end
 
@@ -16,7 +16,7 @@ module Seek
         open_crate do
           super
         end
-      rescue ::ROCrate::ReadException => e
+      rescue ::RoCrate::ReadException => e
         false
       end
 
@@ -24,7 +24,7 @@ module Seek
         open_crate do
           super
         end
-      rescue ::ROCrate::ReadException => e
+      rescue ::RoCrate::ReadException => e
         nil
       end
 
@@ -44,9 +44,9 @@ module Seek
         v = Dir.mktmpdir('ro-crate') do |dir|
           if @obj.respond_to?(:in_dir)
             @obj.in_dir(dir)
-            @opened_crate = ::ROCrate::WorkflowCrateReader.read(dir)
+            @opened_crate = ::RoCrate::WorkflowCrateReader.read(dir)
           else
-            @opened_crate = ::ROCrate::WorkflowCrateReader.read_zip(@obj.is_a?(ContentBlob) ? @obj.data_io_object : @obj, target_dir: dir)
+            @opened_crate = ::RoCrate::WorkflowCrateReader.read_zip(@obj.is_a?(ContentBlob) ? @obj.data_io_object : @obj, target_dir: dir)
           end
           yield @opened_crate
         end
@@ -55,14 +55,14 @@ module Seek
 
         v
       rescue StandardError => e
-        raise ::ROCrate::ReadException.new("Couldn't read RO-Crate metadata.", e)
+        raise ::RoCrate::ReadException.new("Couldn't read RO-Crate metadata.", e)
       end
 
       def diagram_extension
         open_crate do
           super
         end
-      rescue ::ROCrate::ReadException => e
+      rescue ::RoCrate::ReadException => e
         false
       end
 

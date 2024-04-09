@@ -209,10 +209,10 @@ module Seek
     end
 
     def mime_magic_content_type
-      io = File.open(filepath)
-      type = MimeMagic.by_magic(io).try(:type) if file_exists?
-      io.close
-      type
+      return nil unless file_exists?
+      File.open(filepath) do |file|
+        Marcel::MimeType.for(file, name: original_filename)
+      end
     end
 
     def set_content_type_according_to_file

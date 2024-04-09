@@ -181,4 +181,42 @@ class ContentTypeDetectionTest < ActiveSupport::TestCase
       assert blob.is_text?
     end
   end
+
+  test 'basic mime magic checks' do
+    blob = FactoryBot.create(:docx_content_blob)
+    assert_equal 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:xlsx_content_blob)
+    assert_equal 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:image_content_blob)
+    assert_equal 'image/png',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:pdf_content_blob)
+    assert_equal 'application/pdf',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:csv_content_blob)
+    assert_equal 'text/csv',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:tsv_content_blob)
+    assert_equal 'text/tab-separated-values',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:pptx_content_blob)
+    assert_equal 'application/vnd.openxmlformats-officedocument.presentationml.presentation',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:odp_content_blob)
+    assert_equal 'application/vnd.oasis.opendocument.presentation',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:odt_content_blob)
+    assert_equal 'application/vnd.oasis.opendocument.text',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:spreadsheet_content_blob)
+    assert_equal 'application/vnd.ms-excel',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:ppt_content_blob)
+    assert_equal 'application/vnd.ms-powerpoint',blob.send(:mime_magic_content_type)
+
+    blob = FactoryBot.create(:doc_content_blob)
+    assert_equal 'application/msword',blob.send(:mime_magic_content_type)
+  end
 end

@@ -1020,6 +1020,7 @@ DEPENDENCIES
   lograge
   loofah
   magic_lamp
+  marcel
   mechanize
   metainspector
   mimemagic (~> 0.3.7)
@@ -1107,4 +1108,4 @@ DEPENDENCIES
   zenodo-client!
 
 BUNDLED WITH
-   2.4.9
+   2.4.20

@@ -88,7 +88,7 @@ module Seek
 
         metadata[:tags] = galaxy['tags']
 
-        tools = tool_ids.uniq.map { |i| ::Galaxy::ToolMap.instance.lookup(i, strip_version: true) }.compact.uniq
+        tools = tool_ids.uniq.map { |i| ::Galaxy::ToolMap.instance.lookup(i, strip_version: true) }.flatten.compact.uniq
         metadata[:tools_attributes] = tools if tools.any?
 
         metadata

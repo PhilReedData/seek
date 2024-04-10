@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://usegalaxy.eu/api/tools
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - rest-client/2.1.0 (linux x86_64) ruby/3.1.4p223
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Host:
+      - usegalaxy.eu
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.14.1
+      Date:
+      - Wed, 10 Apr 2024 12:04:04 GMT
+      Content-Type:
+      - application/json; charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Cache-Control:
+      - max-age=0,no-cache,no-store
+      X-Request-Id:
+      - 8931d8e0672f4cd58f96c7dcfdc3fa94
+      X-Clacks-Overhead:
+      - GNU James Taylor (@jxtx) Simon Gladman (@slugger70) Jim Johnson (@jj-umn)
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"model_class":"ToolSection","id":"variant_calling","name":"Variant Calling","version":"","description":null,"links":null,"elems":[{"model_class":"Tool","id":"toolshed.g2.bx.psu.edu/repos/iuc/beacon2_csv2xlsx/beacon2_csv2xlsx/2.0.0+galaxy0","name":"Beacon2 CSV2XLSX","version":"2.0.0+galaxy0","description":"v2CSV Models to XLSX","labels":[],"edam_operations":[],"edam_topics":[],"hidden":"","is_workflow_compatible":true,"xrefs":[{"value":"GA4GH Beacon","reftype":"bio.tools"}],"tool_shed_repository":{"name":"beacon2_csv2xlsx","owner":"iuc","changeset_revision":"ba4ed464f8b6","tool_shed":"toolshed.g2.bx.psu.edu"},"link":"/tool_runner?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fbeacon2_csv2xlsx%2Fbeacon2_csv2xlsx%2F2.0.0%2Bgalaxy0","min_width":-1,"target":"galaxy_main","panel_section_id":"variant_calling","panel_section_name":"Variant Calling","form_style":"regular"},{"model_class":"Tool","id":"toolshed.g2.bx.psu.edu/repos/iuc/beacon2_pxf2bff/beacon2_pxf2bff/2.0.0+galaxy0","name":"Beacon2 PXF2BFF","version":"2.0.0+galaxy0","description":"convertsPhenopacket PXF (JSON) to BFF (JSON)","labels":[],"edam_operations":[],"edam_topics":[],"hidden":"","is_workflow_compatible":true,"xrefs":[{"value":"GA4GH Beacon","reftype":"bio.tools"}],"tool_shed_repository":{"name":"beacon2_pxf2bff","owner":"iuc","changeset_revision":"30605b5fc43f","tool_shed":"toolshed.g2.bx.psu.edu"},"link":"/tool_runner?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fbeacon2_pxf2bff%2Fbeacon2_pxf2bff%2F2.0.0%2Bgalaxy0","min_width":-1,"target":"galaxy_main","panel_section_id":"variant_calling","panel_section_name":"Variant Calling","form_style":"regular"},{"model_class":"Tool","id":"toolshed.g2.bx.psu.edu/repos/iuc/beacon2_vcf2bff/beacon2_vcf2bff/2.0.0+galaxy0","name":"Beacon2 VCF2BFF","version":"2.0.0+galaxy0","description":"convertingannotated VCF files to Beacon v2 format","labels":[],"edam_operations":[],"edam_topics":[],"hidden":"","is_workflow_compatible":true,"xrefs":[{"value":"GA4GH Beacon","reftype":"bio.tools"}],"tool_shed_repository":{"name":"beacon2_vcf2bff","owner":"iuc","changeset_revision":"0a757835a745","tool_shed":"toolshed.g2.bx.psu.edu"},"link":"/tool_runner?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fbeacon2_vcf2bff%2Fbeacon2_vcf2bff%2F2.0.0%2Bgalaxy0","min_width":-1,"target":"galaxy_main","panel_section_id":"variant_calling","panel_section_name":"Variant Calling","form_style":"regular"}]},{"model_class":"ToolSection","id":"graphclust","name":"GraphClust","version":"","description":null,"links":null,"elems":[{"model_class":"Tool","id":"toolshed.g2.bx.psu.edu/repos/rnateam/structure_to_gspan/structure_to_gspan/0.4","name":"Structure to GSPAN","version":"0.4","description":"","labels":[],"edam_operations":[],"edam_topics":[],"hidden":"","is_workflow_compatible":true,"xrefs":[{"value":"graphclust, GraphClust2","reftype":"bio.tools"}],"tool_shed_repository":{"name":"structure_to_gspan","owner":"rnateam","changeset_revision":"d34ab3aa1724","tool_shed":"toolshed.g2.bx.psu.edu"},"link":"/tool_runner?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Frnateam%2Fstructure_to_gspan%2Fstructure_to_gspan%2F0.4","min_width":-1,"target":"galaxy_main","panel_section_id":"graphclust","panel_section_name":"GraphClust","form_style":"regular"}]}]'
+    http_version:
+  recorded_at: Wed, 10 Apr 2024 12:04:04 GMT
+recorded_with: VCR 2.9.3

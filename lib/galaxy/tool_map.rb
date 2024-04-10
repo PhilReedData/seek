@@ -18,7 +18,7 @@ module Galaxy
 
     def lookup(tool_id, strip_version: false)
       tool_id = strip_version(tool_id) if strip_version
-      map[tool_id]
+      map[tool_id] || []
     end
 
     def map
@@ -57,18 +57,22 @@ module Galaxy
           (elem['xrefs'] || []).each do |xref|
             tool_id = strip_version(elem['id']) # Remove version (final / component)
             if xref['reftype'] == 'bio.tools'
-              biotools_id = xref['value']
-              unless tool_cache.key?(biotools_id)
-                begin
-                  tool_cache[biotools_id] = biotools_client.tool(biotools_id)['name']
-                rescue RestClient::NotFound
-                  tool_cache[biotools_id] = nil
-                rescue StandardError => e
-                  Rails.logger.error("Error fetching bio.tools info for #{biotools_id} - #{e.class.name}:#{e.message}")
+              biotools_ids = xref['value'].split(',').map(&:strip)
+              biotools_ids.each do |biotools_id|
+                biotools_id = biotools_id.gsub(' ', '_')
+                unless tool_cache.key?(biotools_id)
+                  begin
+                    tool_cache[biotools_id] = biotools_client.tool(biotools_id)['name']
+                  rescue RestClient::NotFound
+                    tool_cache[biotools_id] = nil
+                  rescue StandardError => e
+                    Rails.logger.error("Error fetching bio.tools info for #{biotools_id} - #{e.class.name}:#{e.message}")
+                  end
                 end
-              end
-              if biotools_id && tool_cache[biotools_id]
-                found[tool_id] = { bio_tools_id: biotools_id, name: tool_cache[biotools_id] }
+                if biotools_id && tool_cache[biotools_id]
+                  found[tool_id] ||= []
+                  found[tool_id] << { bio_tools_id: biotools_id, name: tool_cache[biotools_id] }
+                end
               end
             end
           end

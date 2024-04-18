@@ -1,6 +1,6 @@
 require 'ro_crate'
 
-module RoCrate
+module ROCrate
   class WorkflowCrate < ::ROCrate::Crate
     PROFILE = {
       '@id' => 'https://about.workflowhub.eu/Workflow-RO-Crate/',

@@ -21,7 +21,7 @@ module Seek
         end
         cf.rewind
         if status.success?
-          metadata = Seek::WorkflowExtractors::Cwl.new(cf).metadata
+          metadata = Seek::WorkflowExtractors::CWL.new(cf).metadata
         else
           metadata = super
           metadata[:warnings] ||= []

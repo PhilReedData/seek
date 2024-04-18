@@ -1,3 +1,3 @@
-module RoCrate
-  class WriteException < RoCrate::Exception; end
+module ROCrate
+  class WriteException < ROCrate::Exception; end
 end

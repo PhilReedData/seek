@@ -1,3 +1,3 @@
-module RoCrate
-  class ReadException < RoCrate::Exception; end
+module ROCrate
+  class ReadException < ROCrate::Exception; end
 end

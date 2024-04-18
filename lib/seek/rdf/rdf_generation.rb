@@ -5,7 +5,7 @@ module Seek
     module RdfGeneration
       include RdfRepositoryStorage
       include RightField
-      include CsvMappingsHandling
+      include CSVMappingsHandling
 
       def self.included(base)
         base.after_commit :queue_rdf_generation, on: [:create, :update]
@@ -64,7 +64,7 @@ module Seek
       # extra steps that cannot be easily handled by the csv template
       def additional_triples(rdf_graph)
         if is_a?(Model) && contains_sbml?
-          rdf_graph << [rdf_resource, JermVocab.hasFormat, JermVocab.SBML_format]
+          rdf_graph << [rdf_resource, JERMVocab.hasFormat, JERMVocab.SBML_format]
         end
         rdf_graph
       end
@@ -85,17 +85,17 @@ module Seek
 
       # the URI for the type of this object, for example http://jermontology.org/ontology/JERMOntology#Study for a Study
       def rdf_type_uri
-        JermVocab[rdf_type_entity_fragment]
+        JERMVocab[rdf_type_entity_fragment]
       end
 
       def rdf_type_entity_fragment
-        JermVocab.defined_types[self.class]
+        JERMVocab.defined_types[self.class]
       end
 
       # the hash of namespace prefixes to pass to the RDF::Writer when generating the RDF
       def ns_prefixes
         {
-          'jerm' => JermVocab.to_uri.to_s,
+          'jerm' => JERMVocab.to_uri.to_s,
           'dcterms' => RDF::Vocab::DC.to_uri.to_s,
           'owl' => RDF::Vocab::OWL.to_uri.to_s,
           'foaf' => RDF::Vocab::FOAF.to_uri.to_s,

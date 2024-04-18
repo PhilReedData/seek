@@ -15,9 +15,9 @@ module WorkflowExtraction
 
   def extractor
     if is_git_ro_crate?
-      Seek::WorkflowExtractors::RoCrate.new(git_version, main_workflow_class: workflow_class)
+      Seek::WorkflowExtractors::ROCrate.new(git_version, main_workflow_class: workflow_class)
     elsif is_already_ro_crate?
-      Seek::WorkflowExtractors::RoCrate.new(content_blob, main_workflow_class: workflow_class)
+      Seek::WorkflowExtractors::ROCrate.new(content_blob, main_workflow_class: workflow_class)
     elsif is_git_versioned?
       Seek::WorkflowExtractors::GitRepo.new(git_version, main_workflow_class: workflow_class)
     else
@@ -86,7 +86,7 @@ module WorkflowExtraction
       remotes = git_version.remote_sources
       m = main_workflow_blob
       if m
-        crate.main_workflow = main_workflow_blob.to_crate_entity(crate, type: RoCrate::Workflow)
+        crate.main_workflow = main_workflow_blob.to_crate_entity(crate, type: ROCrate::Workflow)
         remotes.delete(main_workflow_blob.path)
         crate.main_workflow.programming_language = ROCrate::ContextualEntity.new(crate, nil, workflow_class&.ro_crate_metadata || Seek::WorkflowExtractors::Base::NULL_CLASS_METADATA)
       end
@@ -94,7 +94,7 @@ module WorkflowExtraction
       d = diagram_blob
       if d
         remotes.delete(d.path)
-        diagram_entity = d.to_crate_entity(crate, type: RoCrate::WorkflowDiagram)
+        diagram_entity = d.to_crate_entity(crate, type: ROCrate::WorkflowDiagram)
         crate.add_data_entity(diagram_entity)
         crate.main_workflow.diagram = diagram_entity if crate.main_workflow
       else # Was the diagram generated?
@@ -109,7 +109,7 @@ module WorkflowExtraction
       c = abstract_cwl_blob
       if c
         remotes.delete(c.path)
-        cwl_entity = c.to_crate_entity(crate, type: RoCrate::WorkflowDescription)
+        cwl_entity = c.to_crate_entity(crate, type: ROCrate::WorkflowDescription)
         crate.add_data_entity(cwl_entity)
         crate.main_workflow.cwl_description = cwl_entity if crate.main_workflow
       end
@@ -119,11 +119,11 @@ module WorkflowExtraction
       end
     else
       unless crate.main_workflow
-        crate.main_workflow = RoCrate::Workflow.new(crate, content_blob.filepath, content_blob.original_filename, contentSize: content_blob.file_size)
+        crate.main_workflow = ROCrate::Workflow.new(crate, content_blob.filepath, content_blob.original_filename, contentSize: content_blob.file_size)
       end
       d = diagram
       if d&.exists?
-        wdf = crate.main_workflow_diagram || RoCrate::WorkflowDiagram.new(crate, d.path, d.filename)
+        wdf = crate.main_workflow_diagram || ROCrate::WorkflowDiagram.new(crate, d.path, d.filename)
         wdf.content_size = d.size
         crate.main_workflow.diagram = wdf
       end
@@ -205,7 +205,7 @@ module WorkflowExtraction
     if is_already_ro_crate?
       extractor.open_crate(&inner)
     else
-      RoCrate::WorkflowCrate.new.tap(&inner)
+      ROCrate::WorkflowCrate.new.tap(&inner)
     end
   end
 
@@ -219,7 +219,7 @@ module WorkflowExtraction
 
       ro_crate_path
     rescue StandardError => e
-      raise ::RoCrate::WriteException.new("Couldn't generate RO-Crate metadata.", e)
+      raise ::ROCrate::WriteException.new("Couldn't generate RO-Crate metadata.", e)
     end
   end
 

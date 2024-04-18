@@ -1,4 +1,4 @@
-module RoCrate
+module ROCrate
   class Exception < RuntimeError
     attr_reader :cause
 

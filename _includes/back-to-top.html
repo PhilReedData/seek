@@ -1,0 +1,25 @@
+  <!-- Add a button to scroll back to top. Adapted from https://github.com/ELIXIR-Belgium/elixir-toolkit-theme/ -->
+  <button id="back-to-top" class="" type="button" aria-hidden="true" onclick="topFunction()">
+    Top
+  </button>
+
+  <script>
+    var toggleHeight = $(window).outerHeight() / 2;
+
+    $(window).scroll(function () {
+        if ($(window).scrollTop() > toggleHeight) {
+            //Adds active class to make button visible
+            $("#back-to-top").addClass("visible");
+
+        } else {
+            //Removes active class to make button visible
+            $("#back-to-top").removeClass("visible");
+        }
+    });
+
+    //Scrolls the user to the top of the page again
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+  </script>

@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Creating and Managing Programmes
-layout: page
+layout: user-guide-page
 ---
 
 # Creating and managing Programmes

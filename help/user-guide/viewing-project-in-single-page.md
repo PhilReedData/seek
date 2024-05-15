@@ -1,6 +1,6 @@
 ---
  title: SEEK User Guide - Viewing Project in Single Page
- layout: page
+ layout: user-guide-page
 ---
 
 # Experiment View

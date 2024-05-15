@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Browsing
-layout: page
+layout: user-guide-page
 ---
 
 # Browsing content on seek

@@ -16,7 +16,54 @@ subitems:
     - title: Editing your profile
       url: /help/user-guide/editing-profile.html
     - title: "Favourites: drag and drop your favourite searchers"
-  - title: Yellow Pages
+      url: ""
+  - 
+    hr: true
+    title: Yellow Pages
     subitems: 
-    - title: Browsing content
-      url: /help/user-guide/browsing.html  
+    - title: "(aliases: Directory)"
+      subitems:
+      - title: Browsing content
+        url: /help/user-guide/browsing.html  
+      - title: Creating and managing your own Programmes
+        url: /help/user-guide/programme-creation-and-management.html
+      - title: Creating a Project
+        url: /help/user-guide/create-a-project.html
+      - title: Joining a Project
+        url: /help/user-guide/join-a-project.html
+      - title: Project Dashboard
+        url: /help/user-guide/project-dashboard.html
+      - title: Viewing Project in Experiment View
+        url: /help/user-guide/viewing-project-in-single-page.html
+      - title: Specialist user roles and their capabilities
+        url: /help/user-guide/roles.html
+    - title: Specialist user roles
+      subitems:
+      - title: Programme administrator
+        url: /help/user-guide/roles.html#programme-administrator
+      - title: Project administrator
+        url: /help/user-guide/roles.html#project-administrator
+      - title: Asset housekeeper
+        url: /help/user-guide/roles.html#asset-housekeeper
+      - title: Asset gatekeeper
+        url: /help/user-guide/roles.html#asset-gatekeeper
+    - title: Capabilities
+      subitems:
+      - title: Assign people to Project roles
+        url: /help/user-guide/administer-project-members.html#assign-people-to-project-roles
+      - title: Flag when a person becomes inactive in a Project
+        url: /help/user-guide/administer-project-members.html#flag-when-a-person-becomes-inactive-in-a-project
+      - title: Create Organisms
+        url: /help/user-guide/adding-admin-items.html#creating-organisms
+      - title: Create Profiles
+        url: /help/user-guide/adding-admin-items.html#creating-profiles
+      - title: Create Institutions
+        url: /help/user-guide/adding-admin-items.html#creating-institutions
+      - title: Add and remove people from a Project
+        url: /help/user-guide/administer-project-members.html#add-and-remove-people-from-a-project - 
+  -
+    hr: true
+    title: Experiments
+    subitems: 
+    - title: Generating the ISA structure
+      url: /help/user-guide/generating-the-isa-structure.html

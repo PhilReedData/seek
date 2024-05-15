@@ -1,6 +1,6 @@
 ---
 title: Project Dashboard
-layout: page
+layout: user-guide-page
 ---
 
 # Project Dashboard

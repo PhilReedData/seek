@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Administer project members
-layout: page
+layout: user-guide-page
 ---
 
 # Administering project members

@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Request to join a project
-layout: page
+layout: user-guide-page
 ---
 
 For details about what a Project and Programme is, please see [Creating a Project](./create-a-project.html)

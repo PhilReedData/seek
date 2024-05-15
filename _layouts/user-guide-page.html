@@ -29,7 +29,7 @@ layout: default
         {%- if folder.url %}
             <a class="hover-primary text-start d-block mb-1" href="{{folder.url | relative_url }}">{{ folder.title }}</a>
         {%- else %}    
-            <strong>{{ folder.title }}</strong>
+            <a class="btn" href=""><strong>{{ folder.title }}</strong></a>
         {%- endif %}
         {%- if folder.subitems %}
             <ul class="list-unstyled">
@@ -84,10 +84,31 @@ layout: default
 </div>
 
 
-<!-- Relocate the Google Search block to aid with CSS grid layout -->
+<!-- Relocate the Google Search block to aid with CSS grid layout. -->
+<!-- Sidebar navigation sections can be collapsed/expanded. -->
 <script>
     const searchBlock = document.getElementById('google-search');
     const mainBlock = document.getElementById('main');
     const postContent = document.getElementById('main-article');
     mainBlock.insertBefore(searchBlock, postContent);
+
+    $(document).ready(function () {
+        // Initialize navgoco with default options
+        $("#sidebar>nav>ul").navgoco({
+            caretHtml: '',
+            accordion: true,
+            openClass: 'active', // open
+            save: false, // leave false or nav highlighting doesn't work right
+            cookie: {
+                name: 'navgoco',
+                expires: false,
+                path: '/'
+            },
+            slide: {
+                duration: 400,
+                easing: 'swing'
+            }
+        });
+    });
+
 </script>

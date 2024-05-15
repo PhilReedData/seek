@@ -149,13 +149,35 @@ div#isa-overview-avatar-legend td {
     color: black;
 }
 
+.user-guide-page ul ul {
+    padding-left: 0.75rem;
+}
+
+.user-guide-page ul ul ul {
+    padding-left: 1.5rem;
+}
+
+
 .user-guide-page nav li {
     border-bottom: thin solid #e7e7e7;
     padding: 0.2em 0;
 }
 
+.user-guide-page nav li .active:not(.parent) > a{
+    color: lightgray;
+}
+
 .user-guide-page article {
     padding-top: 2rem; /* to clear the search box */
+}
+
+.user-guide-page .btn {
+    display: block;
+    text-align: left;
+    background-color: darkgray;
+}
+.user-guide-page .btn:hover {
+    background-color: #4CCAF5;
 }
 
 @media (min-width: 768px) {

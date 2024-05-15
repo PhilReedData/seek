@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Roles
-layout: page
+layout: user-guide-page
 ---
 
 

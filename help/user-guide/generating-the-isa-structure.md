@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Generating the ISA structure
-layout: page
+layout: user-guide-page
 ---
 
 # Generating the ISA structure

@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Creating a project
-layout: page
+layout: user-guide-page
 ---
 
 # What is a Project

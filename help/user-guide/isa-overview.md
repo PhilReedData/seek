@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - ISA overview
-layout: page
+layout: user-guide-page
 ---
 
 # ISA Overview

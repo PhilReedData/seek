@@ -67,3 +67,63 @@ subitems:
     subitems: 
     - title: Generating the ISA structure
       url: /help/user-guide/generating-the-isa-structure.html
+      subitems:
+      - title: Creating an Investigation
+        url: /help/user-guide/generating-the-isa-structure.html#creating-an-investigation
+      - title: Creating a Study
+        url: /help/user-guide/generating-the-isa-structure.html#creating-a-study
+      - title: Creating an Experimental assay
+        url: /help/user-guide/generating-the-isa-structure.html#creating-an-experimental-assay
+      - title: Creating a Modelling analysis
+        url: /help/user-guide/generating-the-isa-structure.html#creating-a-modelling-analysis
+    - title: ISA Overview Graph
+      url: /help/user-guide/isa-overview.html
+    - hr: true
+      title: Designing an ISA-JSON compliant experiment
+      url: /help/user-guide/designing-experiments-isajson-compliant.html
+      subitems:
+      - title: Creating an ISA Investigation
+        url: /help/user-guide/designing-experiments-isajson-compliant.html#1-creating-an-isa-investigation
+      - title: Creating an ISA Study
+        url: /help/user-guide/designing-experiments-isajson-compliant.html#2-creating-an-isa-study
+      - title: Creating an ISA Assay
+        url: /help/user-guide/designing-experiments-isajson-compliant.html#5-creating-an-assay-stream
+    - title: ISA-JSON complient experiment
+      url: /help/user-guide/isa-json-compliant-experiment.html
+    - title: Export experiments as ISA-JSON
+      url: /help/user-guide/exporting-experiments-as-isajson.html
+    - title: Experiment Sample Templates
+      url: /help/user-guide/isa-json-compliant-experiment.html#experiment-sample-templates
+    - hr: true
+      title: Making an Investigation, Study or Assay citable
+      url: /help/user-guide/investigation-snapshots.html
+      subitems:
+      - title: Making public
+        url: /help/user-guide/investigation-snapshots.html#making-public
+      - title: Snapshotting
+        url: /help/user-guide/investigation-snapshots.html#snapshotting
+      - title: Creating a Research Object
+        url: /help/user-guide/investigation-snapshots.html#creating-a-research-object
+      - title: Assigning a DOI
+        url: /help/user-guide/investigation-snapshots.html#assigning-a-doi
+  -
+    hr: true
+    title: Assets
+  -
+    hr: true
+    title: Samples
+  -
+    hr: true
+    title: General attributes and links
+  -
+    hr: true
+    title: Activities
+  - 
+    hr: true
+    title: Integrations
+  -
+    hr: true
+    title: User guide for API
+  -
+    hr: true
+    title: Contribute

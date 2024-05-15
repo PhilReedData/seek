@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Exporting experiments as ISA-JSON
-layout: page
+layout: user-guide-page
 ---
 
 # Exporting experiments in ISA-JSON format

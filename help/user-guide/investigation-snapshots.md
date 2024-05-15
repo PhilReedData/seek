@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Making an Investigation citable
-layout: page
+layout: user-guide-page
 ---
 
 # Making an Investigation, Study or Assay citable

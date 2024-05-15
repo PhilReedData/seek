@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Designing an ISA-JSON compliant experiment
-layout: page
+layout: user-guide-page
 ---
 
 # Designing an ISA-JSON compliant experiment

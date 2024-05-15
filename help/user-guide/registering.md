@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Registering
-layout: page
+layout: user-guide-page
 ---
 
 # Registering in SEEK

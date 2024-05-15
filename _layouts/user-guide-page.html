@@ -1,0 +1,93 @@
+---
+layout: default
+---
+
+{%- assign sidebar = site.data.sidebars['user-guide'] %}
+
+<div class="post user-guide-page">
+
+  <header class="post-header">
+    <!-- <h1 class="post-title">{{ page.title }}</h1> -->
+  </header>
+
+  <aside id="sidebar">
+    <nav role="navigation" aria-label="Side navigation" id="side-nav">
+      <h3 id="user-guide-nav">
+        <a href="{{ sidebar.title_url | relative_url }}">
+            {{ sidebar.title }}
+        </a></h3>
+      <ul class="list-unstyled mb-4">
+        {%- for folder in sidebar.subitems %}
+        {%- if page.url == folder.url %}
+        <li class="active{%- if folder.hr %} mt-3{% endif %}">
+        {%- else %}
+        <li {%- if folder.hr %} class="mt-3"{% endif %}>
+        {%- endif %}
+        {%- if folder.external_url %}
+            <a class="hover-primary text-start d-block mb-1" href="{{folder.external_url}}" target="_blank" rel="noopener">{{folder.title}}</a>
+        {%- endif %}
+        {%- if folder.url %}
+            <a class="hover-primary text-start d-block mb-1" href="{{folder.url | relative_url }}">{{ folder.title }}</a>
+        {%- else %}    
+            <strong>{{ folder.title }}</strong>
+        {%- endif %}
+        {%- if folder.subitems %}
+            <ul class="list-unstyled">
+                {%- for subfolder in folder.subitems %}
+                {%- if page.url == subfolder.url %}
+                <li class="active">
+                {%- else %}
+                <li>
+                {%- endif %}
+                {%- if subfolder.external_url %}
+                    <a class="hover-primary text-start d-block mb-1" href="{{subfolder.external_url}}" target="_blank" rel="noopener">{{subfolder.title}}</a>
+                {%- else %}    
+                    <a class="hover-primary text-start d-block mb-1" href="{{subfolder.url | relative_url }}">{{ subfolder.title }}</a>
+                {%- endif %}
+                {%- if subfolder.subitems %}
+                    <ul class="">
+                        {%- for subsubfolder in subfolder.subitems %}
+                        {%- if page.url == subsubfolder.url %}
+                        <li class="active">
+                        {%- else %}
+                        <li>
+                        {%- endif %}
+                        {%- if subsubfolder.external_url %}
+                            <a class="hover-primary text-start d-block mb-1" href="{{subsubfolder.external_url}}" target="_blank" rel="noopener">{{subsubfolder.title}}</a>
+                        {%- else %}    
+                            <a class="hover-primary text-start d-block mb-1" href="{{subsubfolder.url | relative_url }}">{{ subsubfolder.title }}</a>
+                        {%- endif %}
+                        </li>
+                        {%- endfor %}
+                    </ul>
+                {%- endif %}
+                </li>
+                {%- endfor %}
+            </ul>
+        {%- endif %}
+        </li>
+
+        {%- endfor %}
+      </ul>
+      <script>$("li.active").parents('li').toggleClass("active parent");</script>
+    </nav>
+  </aside>
+
+  <main id="main">
+    <article class="post-content" id="main-article">
+        <section class="main-content">
+        {{ content }}
+        </section>
+    </article>
+   </main>
+
+</div>
+
+
+<!-- Relocate the Google Search block to aid with CSS grid layout -->
+<script>
+    const searchBlock = document.getElementById('google-search');
+    const mainBlock = document.getElementById('main');
+    const postContent = document.getElementById('main-article');
+    mainBlock.insertBefore(searchBlock, postContent);
+</script>

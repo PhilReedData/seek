@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Managing account
-layout: page
+layout: user-guide-page
 ---
 
 # Managing your account

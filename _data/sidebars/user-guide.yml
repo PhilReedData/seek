@@ -1,0 +1,22 @@
+title: User Guide
+title_url: /help/user-guide/index.html
+subitems:
+  - title: Profile
+    subitems:
+    - title: Registering in SEEK
+      url: /help/user-guide/registering.html
+      subitems:
+      - title: Logging into SEEK via LS Login
+        url: /help/user-guide/aai.html
+    - title: Managing your account
+      url: /help/user-guide/managing-account.html
+      subitems:
+      - title: Managing your identities/alternative login methods
+        url: /help/user-guide/managing-identities.html
+    - title: Editing your profile
+      url: /help/user-guide/editing-profile.html
+    - title: "Favourites: drag and drop your favourite searchers"
+  - title: Yellow Pages
+    subitems: 
+    - title: Browsing content
+      url: /help/user-guide/browsing.html  

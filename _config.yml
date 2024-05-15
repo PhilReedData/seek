@@ -11,3 +11,12 @@ plugins:
 name: FAIRDOM
 url: https://docs.seek4science.org
 author: FAIRDOM
+
+defaults:
+  -
+    scope:
+      path: "help/user-guide"
+      type: "user-guide-page"
+    values:
+      layout: "user-guide-page"
+

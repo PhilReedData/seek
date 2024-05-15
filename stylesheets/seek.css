@@ -138,3 +138,36 @@ div#isa-overview-avatar-legend td {
     background-color: #4CCAF5;
     color: white;
 }
+
+/*---- User guide ----*/
+.user-guide-page header {
+    display: none;
+}
+.user-guide-page nav {
+    background-color: #f8f8f8;
+    padding: 0.5em;
+    color: black;
+}
+
+.user-guide-page nav li {
+    border-bottom: thin solid #e7e7e7;
+    padding: 0.2em 0;
+}
+
+.user-guide-page article {
+    padding-top: 2rem; /* to clear the search box */
+}
+
+@media (min-width: 768px) {
+    .user-guide-page {
+        display: grid;
+        grid-template-areas: "sidebar main";
+        grid-template-columns: 3fr 9fr;
+    }
+    .user-guide-page aside {
+        grid-area: sidebar;
+    }
+    .user-guide-page main {
+        grid-area: main;
+    }
+}

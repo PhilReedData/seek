@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Logging in via LS Login
-layout: page
+layout: user-guide-page
 ---
 
 # Logging into SEEK via LS Login

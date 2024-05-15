@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Editing your profile
-layout: page
+layout: user-guide-page
 ---
 
 # Editing your profile

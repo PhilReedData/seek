@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Logging in
-layout: page
+layout: user-guide-page
 ---
 
 # Logging into SEEK

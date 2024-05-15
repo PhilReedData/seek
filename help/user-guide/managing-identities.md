@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Managing Identities
-layout: page
+layout: user-guide-page
 ---
 
 # Managing Identities

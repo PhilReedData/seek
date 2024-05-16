@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Collections
-layout: page
+layout: user-guide-page
 ---
 
 # Collections

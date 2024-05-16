@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - model comparison
-layout: page
+layout: user-guide-page
 ---
 
 # Comparing two versions of a Model

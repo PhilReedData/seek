@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Adding assets
-layout: page
+layout: user-guide-page
 ---
 # Adding assets (Data, Models, SOPs, Presentations, Documents) to SEEK
 

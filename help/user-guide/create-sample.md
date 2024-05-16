@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Create Sample
-layout: page
+layout: user-guide-page
 ---
 
 # Creating a Sample

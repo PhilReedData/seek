@@ -164,7 +164,8 @@ div#isa-overview-avatar-legend td {
 }
 
 .user-guide-page nav li .active:not(.parent) > a{
-    color: lightgray;
+    color: gray;
+    font-weight: bolder;
 }
 
 .user-guide-page article {

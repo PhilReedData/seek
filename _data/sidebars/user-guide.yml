@@ -109,9 +109,63 @@ subitems:
   -
     hr: true
     title: Assets
+    subitems:
+    - title: Adding assets (data, models, SOPs, publications) to SEEK
+      url: /help/user-guide/adding-assets.html
+    - title: Data Files
+      url: /help/user-guide/general-attributes.html#data-files
+      subitems:
+      - title: Data file wizard
+        url: /help/user-guide/data-file-upload-wizard.html
+    - title: Model
+      subitems:
+      - title: Simulate a model on JWS Online
+        url: /help/user-guide/simulate-on-jws-online.html
+    - title: SOPs
+      url: /help/user-guide/general-attributes.html#sops
+    - title: Publications
+      url: /help/user-guide/general-attributes.html#publications
+    - title: Collections
+      url: /help/user-guide/collections.html
+    - title: Document
+    - title: Workflow
+    - title: File template
+    - title: Creating new asset versions
+      url: /help/user-guide/uploading-new-versions.html
+      subitems:
+      - title: Comparing two versions of a Model
+        url: /help/user-guide/model-comparison.html
   -
     hr: true
     title: Samples
+    subitems:
+    - title: Samples
+      url: /help/user-guide/samples.html
+      subitems:
+      - title: Create a Sample Type
+        url: /help/user-guide/create-sample-type.html
+      - title: Create a Sample
+        url: /help/user-guide/create-sample.html
+      - title: Legacy Biosamples
+        url: h/help/user-guide/legacy-biosamples.html
+    - title: Samples in ISA-JSON compliant experiments
+      url: /help/user-guide/isa-json-compliant-experiment.html#samples-in-isa-json-compliant-experiment
+      subitems:
+      - title: Viewing samples in ISA-JSON compliant Experiments
+        url: /help/user-guide/create-sample-isajson-compliant.html#viewing-samples-isajson-compliant-experiments
+      - title: Create Study Sources
+        url: /help/user-guide/create-sample-isajson-compliant.html#create-study-sources
+      - title: Create Study Samples
+        url: /help/user-guide/create-sample-isajson-compliant.html#create-study-samples
+      - title: Create Assay Samples
+        url: /help/user-guide/create-sample-isajson-compliant.html#create-assay-samples
+    - title: Browsing samples
+      url: /help/user-guide/browsing.html#browsing-samples
+      subitems:
+      - title: Browse samples by Sample Type
+        url: /help/user-guide/browsing.html#browse-samples-by-sample-type
+      - title: Browse samples by Experiment Sample Template
+        url: /help/user-guide/browsing.html#browse-samples-by-experiment-sample-template
   -
     hr: true
     title: General attributes and links

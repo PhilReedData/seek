@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - uploading versions
-layout: page
+layout: user-guide-page
 ---
 
 # Creating a new version of an asset

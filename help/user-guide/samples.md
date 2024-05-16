@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Samples
-layout: page
+layout: user-guide-page
 ---
 
 # Samples

@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Create Sample in ISA-JSON compliant Experiments
-layout: page
+layout: user-guide-page
 ---
 
 # Viewing samples in ISA-JSON compliant Experiments

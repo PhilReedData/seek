@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - simulate model on JWS Online
-layout: page
+layout: user-guide-page
 ---
 
 # Simulating Models with JWS Online

@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Legacy Biosamples
-layout: page
+layout: user-guide-page
 ---
 
 # Legacy Biosamples

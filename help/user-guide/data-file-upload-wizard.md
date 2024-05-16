@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Data file upload wizard
-layout: page
+layout: user-guide-page
 ---
 
 # Data file upload wizard

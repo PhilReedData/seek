@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - openBIS
-layout: page
+layout: user-guide-page
 ---
 
 # Using SEEK with openBIS

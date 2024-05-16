@@ -1,6 +1,6 @@
 ---
 title: SEEK User Guide - Bulk changing of sharing permissions
-layout: page
+layout: user-guide-page
 ---
 
 # Bulk changing of sharing permissions

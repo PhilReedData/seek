@@ -1,6 +1,6 @@
 ---
 title: Licenses
-layout: page
+layout: user-guide-page
 ---
 
 # Licenses

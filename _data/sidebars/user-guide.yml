@@ -169,15 +169,76 @@ subitems:
   -
     hr: true
     title: General attributes and links
+    subitems:
+    - title: General attributes and links
+      url: /help/user-guide/general-attributes.html
+    - hr: true
+      title: Title
+      url: /help/user-guide/general-attributes.html#title
+    - title: Description
+      url: /help/user-guide/general-attributes.html#description
+    - title: Projects
+      url: /help/user-guide/general-attributes.html#projects
+    - title: Investigation details
+      url: /help/user-guide/general-attributes.html#investigation-details
+    - title: Study
+      url: /help/user-guide/general-attributes.html#study
+    - title: Biological Problem Addressed
+      url: /help/user-guide/general-attributes.html#biological-problem-addressed
+    - title: Assay Type
+      url: /help/user-guide/general-attributes.html#assay-type
+    - title: Experimental assays and Modelling analysis
+      url: /help/user-guide/general-attributes.html#experimental-assays-and-modelling-analysis
+    - title: Technology Type
+      url: /help/user-guide/general-attributes.html#technology-type
+    - title: Organisms
+      url: /help/user-guide/general-attributes.html#organisms
+    - title: Experiementalists
+      url: /help/user-guide/general-attributes.html#experimentalists
+    - title: Attributions
+      url: /help/user-guide/general-attributes.html#attributions
+    - title: Creators
+      url: /help/user-guide/general-attributes.html#creators
+    - title: Tags
+      url: /help/user-guide/general-attributes.html#tags
+    - title: Discussion channel
+    - title: Licenses
+      url: /help/user-guide/licenses.html
+    - title: Sharing
+      url: /help/user-guide/general-attributes.html#sharing
+      subitems:
+      - title: Bulk changing of sharing permissions
+        url: /help/user-guide/bulk-change-sharing-permission.html
   -
     hr: true
     title: Activities
+    subitems:
+    - title: Presentation
+    - title: Events
+      url: /help/user-guide/general-attributes.html#events
   - 
     hr: true
     title: Integrations
+    subitems:
+    - title: Using SEEK with openBIS
+      url: /help/user-guide/openbis.html
+    - title: Using Copasi with SEEK
+      url: /help/user-guide/copasi-button.html
+    - title: Experiment view (or Simple page)
+      url: /help/user-guide/viewing-project-in-single-page.html
+    - title: Compliance with ISA-JSON schemas
+      url: /help/user-guide/isa-json-compliant-experiment.html
   -
     hr: true
     title: User guide for API
+    subitems:
+    - title: API Introduction
+      url: /help/user-guide/api.html
   -
     hr: true
     title: Contribute
+    subitems:
+    - title: Reporting a bug or feature request
+      url: /tech/reporting-bugs-and-features.html
+    - title: Contributing to these SEEK Documents
+      url: /contributing.html

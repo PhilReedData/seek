@@ -168,6 +168,10 @@ div#isa-overview-avatar-legend td {
     font-weight: bolder;
 }
 
+ul ul .mt-3{
+    margin-top: 1rem !important;
+}
+
 .user-guide-page article {
     padding-top: 2rem; /* to clear the search box */
 }

@@ -179,7 +179,9 @@ ul ul .mt-3{
 .user-guide-page .btn {
     display: block;
     text-align: left;
-    background-color: darkgray;
+    background-color: white;
+    color: black;
+    border: thin solid lightgray;
 }
 .user-guide-page .btn:hover {
     background-color: #4CCAF5;

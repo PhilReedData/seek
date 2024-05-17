@@ -147,7 +147,7 @@ subitems:
       - title: Create a Sample
         url: /help/user-guide/create-sample.html
       - title: Legacy Biosamples
-        url: h/help/user-guide/legacy-biosamples.html
+        url: /help/user-guide/legacy-biosamples.html
     - title: Samples in ISA-JSON compliant experiments
       url: /help/user-guide/isa-json-compliant-experiment.html#samples-in-isa-json-compliant-experiment
       subitems:

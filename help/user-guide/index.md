@@ -1,11 +1,19 @@
 ---
 title: FAIRDOM-SEEK User Guide
-layout: page
+layout: user-guide-page
 ---
 
 # FAIRDOM-SEEK user documentation
 
-## Profile
+You can browse the user documentation with the [side navigation menu](#user-guide-nav), 
+read the [full directory](#full-directory), 
+or [search](#google-search).
+
+{% include user-guide-tiles.html %}
+
+## Full directory
+
+### Profile
 - [Registering in SEEK](registering.html)
 - [Logging into SEEK](login.html)
   - [Logging into SEEK via ELIXIR AAI](aai.html)
@@ -14,7 +22,7 @@ layout: page
 - [Editing your profile](editing-profile.html)
 - Favourites: drag and drop your favourite searchers.
 
-## Yellow pages
+### Yellow pages
 (aliases: Directory)
 - [Browsing content](browsing.html)
 - [Creating and managing your own Programmes](programme-creation-and-management.html)
@@ -38,7 +46,7 @@ Capabilities
   - [Create Institutions](adding-admin-items.html#creating-institutions)
   - [Add and remove people from a Project](administer-project-members.html#add-and-remove-people-from-a-project)
 
-## Experiments
+### Experiments
 - [Generating the ISA structure](generating-the-isa-structure.html)
   - [Creating an Investigation](generating-the-isa-structure.html#creating-an-investigation)
   - [Creating a Study](generating-the-isa-structure.html#creating-a-study)
@@ -60,7 +68,7 @@ Capabilities
   - [Creating a Research Object](investigation-snapshots.html#creating-a-research-object)
   - [Assigning a DOI](investigation-snapshots.html#assigning-a-doi)  
       
-## Assets      
+### Assets      
 - [Adding assets (data, models, SOPs, publications) to SEEK](adding-assets.html)
 - [Data Files](general-attributes.html#data-files)
   - [Data file wizard](data-file-upload-wizard.html)
@@ -75,7 +83,7 @@ Capabilities
 - [Creating new asset versions](uploading-new-versions.html)
   - [Comparing two versions of a Model](model-comparison.html)
 
-## Samples
+### Samples
 - [Samples](samples.html) 
   - [Create a Sample Type](create-sample-type.html)
   - [Create a Sample](create-sample.html)
@@ -92,7 +100,7 @@ Capabilities
   - [Browse samples by Experiment Sample Template](browsing.html#browse-samples-by-experiment-sample-template)
 
 
-## General attributes and links
+### General attributes and links
 [General attributes and links](general-attributes.html)
 - [Title](general-attributes.html#title)
 - [Description](general-attributes.html#description)
@@ -113,20 +121,20 @@ Capabilities
 - [Sharing](general-attributes.html#sharing)
   - [Bulk changing of sharing permissions](bulk-change-sharing-permission.html)
 
-## Activities
+### Activities
 - Presentation
 - [Events](general-attributes.html#events)
 
-## Integrations
+### Integrations
 - [Using SEEK with openBIS](openbis.html)
 - [Using Copasi in SEEK](copasi-button.html)
 - [Experiment view](viewing-project-in-single-page.html) (or Single page)
 - [Compliance with ISA-JSON schemas](isa-json-compliant-experiment.html)
 
-## User guide for API
+### User guide for API
 - [API Introduction](api.html)
 
-## Contribute
+### Contribute
 - [Reporting a bug or feature request](/tech/reporting-bugs-and-features.html)
 - [Contributing to these SEEK Documents](/contributing.html)
 

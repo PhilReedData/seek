@@ -2,6 +2,7 @@ title: User Guide
 title_url: /help/user-guide/index.html
 subitems:
   - title: Profile
+    description: Registering and logging into SEEK, managing your account and identities, editing your profile.
     subitems:
     - title: Registering in SEEK
       url: /help/user-guide/registering.html
@@ -20,6 +21,7 @@ subitems:
   - 
     hr: true
     title: Yellow Pages
+    description: Directory of common project tasks, specialist user roles, capabilities.
     subitems: 
     - title: "(aliases: Directory)"
       subitems:
@@ -64,6 +66,7 @@ subitems:
   -
     hr: true
     title: Experiments
+    description: Generating the ISA structure, designing an ISA-JSON compliant experiement, making items citable.
     subitems: 
     - title: Generating the ISA structure
       url: /help/user-guide/generating-the-isa-structure.html
@@ -109,6 +112,7 @@ subitems:
   -
     hr: true
     title: Assets
+    description: Adding different types of assets to SEEK, creating new asset versions.
     subitems:
     - title: Adding assets (data, models, SOPs, publications) to SEEK
       url: /help/user-guide/adding-assets.html
@@ -138,6 +142,7 @@ subitems:
   -
     hr: true
     title: Samples
+    description: Creating and browsing samples, and samples in ISA-JSON compliant experiments.
     subitems:
     - title: Samples
       url: /help/user-guide/samples.html
@@ -169,6 +174,7 @@ subitems:
   -
     hr: true
     title: General attributes and links
+    description: How to change the many attributes such as titles, types, attributions, licenses. 
     subitems:
     - title: General attributes and links
       url: /help/user-guide/general-attributes.html
@@ -212,6 +218,7 @@ subitems:
   -
     hr: true
     title: Activities
+    description: How to change the events and presentations.
     subitems:
     - title: Presentation
     - title: Events
@@ -219,6 +226,7 @@ subitems:
   - 
     hr: true
     title: Integrations
+    description: Using SEEK and openBIS or Copasi, compliance with ISA-JSON schemas.
     subitems:
     - title: Using SEEK with openBIS
       url: /help/user-guide/openbis.html
@@ -231,12 +239,14 @@ subitems:
   -
     hr: true
     title: User guide for API
+    description: Introduction to the SEEK API.
     subitems:
     - title: API Introduction
       url: /help/user-guide/api.html
   -
     hr: true
     title: Contribute
+    description: Reporting bugs or feature requests, contributing to these documents.
     subitems:
     - title: Reporting a bug or feature request
       url: /tech/reporting-bugs-and-features.html

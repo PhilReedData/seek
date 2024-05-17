@@ -183,8 +183,24 @@ ul ul .mt-3{
     color: black;
     border: thin solid lightgray;
 }
+
 .user-guide-page .btn:hover {
     background-color: #4CCAF5;
+}
+
+#user-guide-tiles {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: 1rem;
+    list-style: none;
+}
+
+.user-guide-tile  {
+    display: contents;
+}
+
+.user-guide-tile-title {
+    background-color: #f8f8f8; /* doesn't work */
 }
 
 @media (min-width: 768px) {

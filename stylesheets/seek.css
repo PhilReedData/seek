@@ -147,6 +147,7 @@ div#isa-overview-avatar-legend td {
     background-color: #f8f8f8;
     padding: 0.5em;
     color: black;
+    border-right: thin solid #e7e7e7;
 }
 
 .user-guide-page ul ul {
@@ -189,20 +190,29 @@ ul ul .mt-3{
 }
 
 #user-guide-tiles {
-    display: grid;
-    grid-template-columns: 1fr 4fr;
-    gap: 1rem;
+    /* see also media tag for wider grid display */
     list-style: none;
 }
 
-.user-guide-tile  {
-    display: contents;
+.user-guide-tile-title a {
+    background-color: #e7e7e7; 
+    display: block;
+    height: 100%;
+    padding: 0 0.5em 0.5em;
 }
 
-.user-guide-tile-title {
-    background-color: #f8f8f8; /* doesn't work */
+.user-guide-tile-title a:hover {
+    background-color: #4CCAF5;
+    color: white;
 }
 
+.user-guide-tile-description p {
+    padding: 0 0.5em 1em;
+    margin: 0 0 1rem;
+    background-color: #f8f8f8; 
+}
+
+/* For wider screens only */
 @media (min-width: 768px) {
     .user-guide-page {
         display: grid;
@@ -214,5 +224,20 @@ ul ul .mt-3{
     }
     .user-guide-page main {
         grid-area: main;
+    }
+    #skipper {
+        display: none;
+    }
+    #user-guide-tiles {
+        display: grid;
+        grid-template-columns: 2fr 4fr;
+        gap: 1rem 0;
+        list-style: none;
+    }
+    .user-guide-tile  {
+        display: contents;
+    }
+    .user-guide-tile-description p {
+        margin-bottom: 0;
     }
 }

@@ -7,13 +7,13 @@
         <!--<div class="user-guide-tile-row">-->
             <div class="user-guide-tile user-guide-tile-title">
                 {%- if folder.subitems[0].url %}
-                <strong><a href="{{ folder.subitems[0].url }}">{{ folder.title }}</a></strong>
+                <a href="{{ folder.subitems[0].url }}"><strong>{{ folder.title }}</strong></a>
                 {%- else %}
-                <strong><a href="{{ folder.subitems[0].subitems[0].url }}">{{ folder.title }}</a></strong>
+                <a href="{{ folder.subitems[0].subitems[0].url }}"><strong>{{ folder.title }}</strong></a>
                 {% endif %}
             </div>
 
-            <div class="user-guide-tile user-guide-tile-description">{{ folder.description }}</div>
+            <div class="user-guide-tile user-guide-tile-description"><p>{{ folder.description }}</p></div>
         <!--</div>-->
         {%- endfor %}
     

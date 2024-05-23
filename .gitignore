@@ -24,3 +24,7 @@ tmp/
 db/
 filestore
 vendor/
+
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata

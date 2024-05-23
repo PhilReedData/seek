@@ -11,3 +11,12 @@ plugins:
 name: FAIRDOM
 url: https://docs.seek4science.org
 author: FAIRDOM
+
+theme: just-the-docs
+
+aux_links:
+  FAIRDOM: https://fair-dom.org/
+
+
+back_to_top: true
+back_to_top_text: "Back to top"

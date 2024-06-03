@@ -1,17 +1,17 @@
 ---
 title: FAIRDOM-SEEK User Guide
-layout: user-guide-page
+layout: page # not user-guide-page
 ---
 
 # FAIRDOM-SEEK user documentation
-
+{% comment %}
 You can browse the user documentation with the [side navigation menu](#user-guide-nav), 
 read the [full directory](#full-directory), 
 or [search](#google-search).
+{% endcomment %}
+{% comment %} include user-guide-tiles.html {% endcomment %}
 
-{% include user-guide-tiles.html %}
-
-## Full directory
+{% comment %}## Full directory{% endcomment %}
 
 ### Profile
 - [Registering in SEEK](registering.html)

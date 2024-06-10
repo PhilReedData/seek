@@ -24,3 +24,5 @@ tmp/
 db/
 filestore
 vendor/
+
+.sass-cache/ 
